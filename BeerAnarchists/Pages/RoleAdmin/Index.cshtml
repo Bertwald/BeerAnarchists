@@ -1,0 +1,80 @@
+﻿@page
+@model BeerAnarchists.Pages.RoleAdmin.IndexModel
+@{
+}
+
+<h1>Roll-Admin</h1>
+
+<div>
+    <h3>Befintliga roller</h3>
+    @foreach (var role in Model.Roles)
+    {
+        <p>@role.Name</p>
+    }
+</div>
+
+
+<div>
+    @if (Model.IsAdmin)
+    {
+        <p class="alert alert-danger">Det här får bara admin se!</p>
+    }
+    @if (Model.IsUser)
+    {
+        <p class="alert alert-success">Det här får bara användare se!</p>
+    }
+</div>
+
+
+<div>
+    <h3>Befintliga användare: </h3>
+
+    <table class="table">
+
+        <tr>
+            <th>Username</th>
+            @foreach (var role in Model.Roles)
+            {
+                <th>@role.Name</th>
+            }
+        </tr>
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <td>@user.UserName</td>
+
+                @foreach (var role in Model.Roles)
+                {
+                    if (await Model._userManager.IsInRoleAsync(user, role.Name))
+                    {
+                        <td>
+                            <a href="?RemoveUserId=@user.Id&Role=@role.Name" class="bg-success text-white p-1">Ja</a>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <a href="?AddUserId=@user.Id&Role=@role.Name" class="bg-danger text-white p-1">Nej</a>
+                        </td>
+                    }
+                }
+
+
+
+
+
+            </tr>
+        }
+
+    </table>
+
+</div>
+
+<div>
+    <form method="post">
+        <label for="RoleName">Ny roll</label>
+        <input name="RoleName" id="RoleName" />
+        <input type="submit" value="Skapa ny roll" />
+    </form>
+
+</div>
