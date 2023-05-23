@@ -14,15 +14,16 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Forum.Data.Models;
 
 namespace BeerAnarchists.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
-        private readonly SignInManager<Forum.Data.Models.ForumUser> _signInManager;
+        private readonly SignInManager<ForumUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<Forum.Data.Models.ForumUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<ForumUser> signInManager, ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
             _logger = logger;
@@ -115,6 +116,8 @@ namespace BeerAnarchists.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+                    var manager = _signInManager;
+                    var user = User;
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

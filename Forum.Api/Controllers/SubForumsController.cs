@@ -17,7 +17,6 @@ namespace Forum.Api.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
-[Authorize]
 public class SubForumsController : ControllerBase
 {
     private readonly ForumDbContext _context;
@@ -32,6 +31,7 @@ public class SubForumsController : ControllerBase
 
 
     // GET: api/SubForums
+    [Authorize(Policy = "Admin")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<SubForum>>> GetSubforums()
     {
@@ -93,7 +93,7 @@ public class SubForumsController : ControllerBase
 
     // POST: api/SubForums
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    //[Authorize(Roles = "Admin")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpPost]
     public async Task<ActionResult<SubForum>> PostSubForum(SubForum subForum)
     {

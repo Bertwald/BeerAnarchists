@@ -6,14 +6,25 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Forum.Data.Models;
 using System.Text.Json;
+using Forum.Services;
+using System.Security.Claims;
+using Azure.Identity;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.Net.Http.Headers;
+using NuGet.Protocol;
+using NuGet.Common;
+using System.Net.Http.Headers;
+using BeerAnarchists.Controllers;
+using Azure;
+using System.Security.AccessControl;
 
 namespace BeerAnarchists.Pages.RoleAdmin;
 
-//[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin")]
 public class IndexModel : PageModel
 {
     public List<ForumUser> Users { get; set; }
-    public List<IdentityRole> Roles { get; set; }
+    public List<IdentityRole> URoles { get; set; }
 
     [BindProperty]
     public string RoleName { get; set; }
@@ -36,14 +47,19 @@ public class IndexModel : PageModel
 
     public readonly UserManager<ForumUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
-    
+    private readonly JwtTokenService _jwtTokenService;
+    private readonly AdminService _adminService;
+    //private readonly TestController _testController;
+
     private Task<IEnumerable<SubForum>> _subForums;
 
 
-    public IndexModel(RoleManager<IdentityRole> roleManager, UserManager<ForumUser> userManager)
+    public IndexModel(RoleManager<IdentityRole> roleManager, UserManager<ForumUser> userManager, JwtTokenService jwt, AdminService adm)
     {
         _roleManager= roleManager;
         _userManager= userManager;
+        _jwtTokenService= jwt;
+        _adminService= adm;
     }
 
     public async Task<IEnumerable<SubForum>> GetSubforums() {
@@ -62,11 +78,14 @@ public class IndexModel : PageModel
     public async void PostSubforum(string name = "default") {
         using (var client = new HttpClient()) {
             var currentUser = await _userManager.GetUserAsync(User);
-            SubForum subForum = new SubForum() { Author = currentUser.UserName, Title = name };
+            //var username = currentUser.Claims.Where(x => x.Type == "preferred-username").Select(x => x.Value).FirstOrDefault();
+            SubForum subForum = new SubForum() { Author = currentUser?.Alias ?? currentUser?.UserName ?? "PlaceHolder", Title = name };
             var json = JsonSerializer.Serialize(subForum);
             StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-            client.BaseAddress = new Uri("https://localhost:7174/");
-            HttpResponseMessage response = await client.PostAsync("api/SubForums/", httpContent);
+            client.BaseAddress = new Uri("https://localhost:7174");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _jwtTokenService.CreateToken(currentUser));
+            //HttpResponseMessage response = await client.PostAsync("api/SubForums/", httpContent);
+            HttpResponseMessage response = await client.GetAsync("api/SubForums/");
             if (response.IsSuccessStatusCode) {
 
                 //string responseString = await response.Content.ReadAsStringAsync();
@@ -77,7 +96,7 @@ public class IndexModel : PageModel
 
     public async Task<IActionResult> OnGetAsync()
     {
-        Roles = await _roleManager.Roles.ToListAsync();
+        URoles = await _roleManager.Roles.ToListAsync();
         Users = await _userManager.Users.ToListAsync();
 
         if(AddUserId != null)
@@ -102,9 +121,19 @@ public class IndexModel : PageModel
             IsAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
         }
 
-        PostSubforum("First Forum");
-        _subForums = GetSubforums();
-
+        //PostSubforum("First Forum");
+        //_subForums = GetSubforums();
+        var client2 = new HttpClient();
+        client2.BaseAddress = new Uri("https://localhost:7208/");
+        client2.DefaultRequestHeaders.Accept.Add(
+        new MediaTypeWithQualityHeaderValue("application/json"));
+        var b = await client2.GetFromJsonAsync<IEnumerable<ForumUser>>("Test");
+        /*
+        var a = await client2.GetAsync("Test");
+        if (a.IsSuccessStatusCode) {
+            var products = a.Content.ReadAsAsync<ForumUser>();
+        }
+        */
         return Page();
     }
 

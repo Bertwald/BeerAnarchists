@@ -6,5 +6,5 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Forum.Services;
-internal class ForumThreadsService : IForumThreads {
+internal sealed class ForumThreadsService : IForumThreads {
 }

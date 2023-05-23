@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace Forum.Services;
-public class SubforumService : ISubforums {
+public sealed class SubforumService : ISubforums {
     private readonly ForumDbContext _context;
 
     public SubforumService(ForumDbContext context) {

@@ -7,7 +7,7 @@
 
 <div>
     <h3>Befintliga roller</h3>
-    @foreach (var role in Model.Roles)
+    @foreach (var role in Model.URoles)
     {
         <p>@role.Name</p>
     }
@@ -33,7 +33,7 @@
 
         <tr>
             <th>Username</th>
-            @foreach (var role in Model.Roles)
+            @foreach (var role in Model.URoles)
             {
                 <th>@role.Name</th>
             }
@@ -43,7 +43,7 @@
             <tr>
                 <td>@user.UserName</td>
 
-                @foreach (var role in Model.Roles)
+                @foreach (var role in Model.URoles)
                 {
                     if (await Model._userManager.IsInRoleAsync(user, role.Name))
                     {

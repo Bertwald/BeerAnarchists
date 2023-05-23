@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Forum.Api", "..\Forum.Api\F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeerAnarchists", "..\BeerAnarchists\BeerAnarchists.csproj", "{8FCF6DDF-BA9D-4472-BE48-B21E1A636F72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forum.Services", "..\Forum.Services\Forum.Services.csproj", "{ED88D9C0-C53A-48E5-8A0A-EAA382BA3D12}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Forum.Services", "..\Forum.Services\Forum.Services.csproj", "{ED88D9C0-C53A-48E5-8A0A-EAA382BA3D12}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
