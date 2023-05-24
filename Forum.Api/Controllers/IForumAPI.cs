@@ -7,6 +7,7 @@ namespace Forum.Api.Controllers;
 public interface IForumAPI {
     #region GET
     public Task<ActionResult<ForumUser>> GetUserById(string id);
+    public Task<ActionResult<ForumUser>> GetUserByMail(string id);
     public Task<ActionResult<IEnumerable<ForumUser>>> GetUsers();
     public Task<ActionResult<int>> GetNumberOfUsers();
     public Task<ActionResult<IEnumerable<ForumUser>>> GetTopPosters();
@@ -16,5 +17,12 @@ public interface IForumAPI {
     public Task<ActionResult<int>> GetNumberOfPosts();
     public Task<ActionResult<int>> GetNumberOfPostsBySubforum(int id);
     public Task<ActionResult<IEnumerable<ForumPost>>> GetForumPosts();
+    #endregion
+    #region POST
+
+    #endregion
+
+    #region DELETE
+
     #endregion
 }

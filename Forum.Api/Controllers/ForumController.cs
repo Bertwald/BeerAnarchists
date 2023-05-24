@@ -5,9 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Forum.Api.Controllers;
-[Route("forum/[action]")]
-[ApiController]
-public class ForumController : ControllerBase, IForumAPI {
+
+public class ForumController : ForumRouteMapping {
     #region Member variables
     private readonly ForumDbContext _context;
     #endregion
@@ -17,9 +16,7 @@ public class ForumController : ControllerBase, IForumAPI {
     }
     #endregion
     #region GET
-    [HttpGet("{id}")]
-    [ActionName("User")]
-    public async Task<ActionResult<ForumUser>> GetUserById(string id) {
+    public async override Task<ActionResult<ForumUser>> GetUserById(string id) {
         if (_context.Users is null) {
             return NotFound();
         }
@@ -32,38 +29,43 @@ public class ForumController : ControllerBase, IForumAPI {
         return user;
     }
 
-    [HttpGet]
-    [ActionName("Users")]
-    public async Task<ActionResult<IEnumerable<ForumUser>>> GetUsers() {
+    public async override Task<ActionResult<ForumUser>> GetUserByMail(string mail) {
+        if (_context.Users is null) {
+            return NotFound();
+        }
+        var user = await _context.ForumUsers.Where(x => x.Email == mail).FirstAsync();
+
+        if (user is null) {
+            return NotFound();
+        }
+
+        return user;
+    }
+
+    public async override Task<ActionResult<IEnumerable<ForumUser>>> GetUsers() {
         if (_context.ForumUsers is null) {
             return NotFound();
         }
         return await _context.ForumUsers.ToListAsync();
     }
 
-    [HttpGet]
-    [ActionName("RegisteredUsers")]
-    public async Task<ActionResult<int>> GetNumberOfUsers() {
+    public async override Task<ActionResult<int>> GetNumberOfUsers() {
         if (_context.Users is null) {
             return 0;
         }
         return await _context.Users.CountAsync();
     }
 
-    [HttpGet]
-    [ActionName("SubFora")]
-    public async Task<ActionResult<IEnumerable<SubForum>>> GetSubFora() {
+    public async override Task<ActionResult<IEnumerable<SubForum>>> GetSubFora() {
         if (_context.Subfora is null) {
-            return NotFound("No posts in forum Database");
+            return NotFound();
         }
-        return await _context.Subfora.Include(x => x.ForumThreads).ToListAsync();
+        return await _context.Subfora.ToListAsync();
     }
 
-    [HttpGet("{id}")]
-    [ActionName("Post")]
-    public async Task<ActionResult<ForumPost>> GetPostById(int id) {
+    public async override Task<ActionResult<ForumPost>> GetPostById(int id) {
         if (_context.ForumPosts is null) {
-            return NotFound("No posts in forum Database");
+            return NotFound();
         }
         var forumPost = await _context.ForumPosts.FindAsync(id);
 
@@ -74,18 +76,14 @@ public class ForumController : ControllerBase, IForumAPI {
         return forumPost;
     }
 
-    [HttpGet]
-    [ActionName("Posts")]
-    public async Task<ActionResult<IEnumerable<ForumPost>>> GetForumPosts() {
+    public async override Task<ActionResult<IEnumerable<ForumPost>>> GetForumPosts() {
         if (_context.ForumPosts is null) {
-            return NotFound("No posts in forum Database");
+            return NotFound();
         }
         return await _context.ForumPosts.ToListAsync();
     }
 
-    [HttpGet]
-    [ActionName("TopPosters")]
-    public async Task<ActionResult<IEnumerable<ForumUser>>> GetTopPosters() {
+    public async override Task<ActionResult<IEnumerable<ForumUser>>> GetTopPosters() {
         if (_context.ForumPosts is null || _context.ForumUsers is null) {
             return NotFound();
         }
@@ -95,9 +93,7 @@ public class ForumController : ControllerBase, IForumAPI {
             .ToListAsync();
     }
 
-    [HttpGet("{date}")]
-    [ActionName("TopPosterSince")]
-    public async Task<ActionResult<IEnumerable<ForumUser>>> GetTopPostersSince(DateTime date) {
+    public async override Task<ActionResult<IEnumerable<ForumUser>>> GetTopPostersSince(DateTime date) {
         if (_context.ForumPosts is null || _context.ForumUsers is null) {
             return NotFound();
         }
@@ -110,18 +106,14 @@ public class ForumController : ControllerBase, IForumAPI {
             .ToListAsync();
     }
 
-    [HttpGet]
-    [ActionName("TotalPosts")]
-    public async Task<ActionResult<int>> GetNumberOfPosts() {
+    public async override Task<ActionResult<int>> GetNumberOfPosts() {
         if (_context.ForumPosts is null) {
             return NotFound();
         }
         return await _context.ForumPosts.CountAsync();
     }
 
-    [HttpGet("{id}")]
-    [ActionName("TotalPostsBySubForumId")]
-    public async Task<ActionResult<int>> GetNumberOfPostsBySubforum(int id) {
+    public async override Task<ActionResult<int>> GetNumberOfPostsBySubforum(int id) {
         if (_context.Subfora is null) {
             return NotFound();
         }
