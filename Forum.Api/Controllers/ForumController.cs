@@ -124,4 +124,29 @@ public class ForumController : ForumRouteMapping {
             .CountAsync();
     }
     #endregion
+    #region POST
+    public async override Task<ActionResult<ForumThread>> PostThread([FromBody] ForumThread thread) {
+        if (_context.ForumThreads == null) {
+            return Problem("Entity set 'ForumDbContext.ForumThreads'  is null.");
+        }
+        _context.ForumThreads.Add(thread);
+        await _context.SaveChangesAsync();
+
+        return CreatedAtAction("Post", thread.Id);
+    }
+    #endregion
+    #region DELETE
+    public async override Task<ActionResult> DeleteThread(int threadId) {
+        if (_context.ForumThreads == null) {
+            return NotFound();
+        }
+        var forumThread = await _context.ForumThreads.FindAsync(threadId);
+        if (forumThread == null) {
+            return NotFound();
+        }
+        _context.ForumThreads.Remove(forumThread);
+        await _context.SaveChangesAsync();
+        return NoContent();
+    }
+    #endregion
 }

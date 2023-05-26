@@ -48,6 +48,7 @@ namespace Forum.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Author = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -96,33 +97,6 @@ namespace Forum.Data.Migrations
                         name: "FK_ForumThreads_Subfora_SubForumId",
                         column: x => x.SubForumId,
                         principalTable: "Subfora",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ForumPosts",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    AncestorId = table.Column<int>(type: "int", nullable: true),
-                    ForumThreadId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ForumPosts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ForumPosts_ForumPosts_AncestorId",
-                        column: x => x.AncestorId,
-                        principalTable: "ForumPosts",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ForumPosts_ForumThreads_ForumThreadId",
-                        column: x => x.ForumThreadId,
-                        principalTable: "ForumThreads",
                         principalColumn: "Id");
                 });
 
@@ -230,6 +204,39 @@ namespace Forum.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ForumPosts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AuthorId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    AncestorId = table.Column<int>(type: "int", nullable: true),
+                    ForumThreadId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ForumPosts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ForumPosts_AspNetUsers_AuthorId",
+                        column: x => x.AuthorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ForumPosts_ForumPosts_AncestorId",
+                        column: x => x.AncestorId,
+                        principalTable: "ForumPosts",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ForumPosts_ForumThreads_ForumThreadId",
+                        column: x => x.ForumThreadId,
+                        principalTable: "ForumThreads",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ForumUserForumUser",
                 columns: table => new
                 {
@@ -273,32 +280,6 @@ namespace Forum.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PostReports",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ReporterId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    ReportedId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PostReports", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PostReports_AspNetUsers_ReportedId",
-                        column: x => x.ReportedId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_PostReports_AspNetUsers_ReporterId",
-                        column: x => x.ReporterId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "PrivateMessage",
                 columns: table => new
                 {
@@ -325,6 +306,59 @@ namespace Forum.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserPreferences",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TrigglyPuff = table.Column<bool>(type: "bit", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserPreferences", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserPreferences_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PostReports",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ReportedPostId = table.Column<int>(type: "int", nullable: true),
+                    ReporterId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ReportedId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostReports", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PostReports_AspNetUsers_ReportedId",
+                        column: x => x.ReportedId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_PostReports_AspNetUsers_ReporterId",
+                        column: x => x.ReporterId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_PostReports_ForumPosts_ReportedPostId",
+                        column: x => x.ReportedPostId,
+                        principalTable: "ForumPosts",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Reactions",
                 columns: table => new
                 {
@@ -347,26 +381,6 @@ namespace Forum.Data.Migrations
                         name: "FK_Reactions_ForumPosts_PostId",
                         column: x => x.PostId,
                         principalTable: "ForumPosts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserPreferences",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TrigglyPuff = table.Column<bool>(type: "bit", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserPreferences", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserPreferences_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -476,6 +490,11 @@ namespace Forum.Data.Migrations
                 column: "AncestorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ForumPosts_AuthorId",
+                table: "ForumPosts",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ForumPosts_ForumThreadId",
                 table: "ForumPosts",
                 column: "ForumThreadId");
@@ -514,6 +533,11 @@ namespace Forum.Data.Migrations
                 name: "IX_PostReports_ReportedId",
                 table: "PostReports",
                 column: "ReportedId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PostReports_ReportedPostId",
+                table: "PostReports",
+                column: "ReportedPostId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PostReports_ReporterId",

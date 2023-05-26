@@ -6,6 +6,7 @@ namespace Forum.Api.Controllers;
 [Route("forum/[action]")]
 [ApiController]
 public abstract class ForumRouteMapping : ControllerBase, IForumAPI {
+    #region GET
     [HttpGet]
     [ActionName("Posts")]
     public abstract Task<ActionResult<IEnumerable<ForumPost>>> GetForumPosts();
@@ -39,4 +40,15 @@ public abstract class ForumRouteMapping : ControllerBase, IForumAPI {
     [HttpGet]
     [ActionName("Users")]
     public abstract Task<ActionResult<IEnumerable<ForumUser>>> GetUsers();
+    #endregion
+    #region POST
+    [HttpPost("{thread}")]
+    [ActionName("NewThread")]
+    public abstract Task<ActionResult<ForumThread>> PostThread([FromBody] ForumThread thread);
+    #endregion
+    #region DELETE
+    [HttpDelete("{threadId}")]
+    [ActionName("DeleteThread")]
+    public abstract Task<ActionResult> DeleteThread(int threadId);
+    #endregion
 }

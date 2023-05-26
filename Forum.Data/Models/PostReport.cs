@@ -15,6 +15,7 @@ public enum ReportStatus {
 public class PostReport {
     public int Id { get; set; }
     public string? Message { get; set; }
+    public DateTime? Created { get; set; }
     public virtual ForumPost? ReportedPost { get; set; }
     public virtual ForumUser? Reporter { get; set; }
     public virtual ForumUser? Reported { get; set; }

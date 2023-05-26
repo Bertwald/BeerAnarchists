@@ -56,6 +56,9 @@ namespace Forum.Data.Migrations
                     b.Property<int?>("AncestorId")
                         .HasColumnType("int");
 
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -72,6 +75,8 @@ namespace Forum.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AncestorId");
+
+                    b.HasIndex("AuthorId");
 
                     b.HasIndex("ForumThreadId");
 
@@ -256,11 +261,17 @@ namespace Forum.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("Created")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Message")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ReportedId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("ReportedPostId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ReporterId")
                         .HasColumnType("nvarchar(450)");
@@ -271,6 +282,8 @@ namespace Forum.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ReportedId");
+
+                    b.HasIndex("ReportedPostId");
 
                     b.HasIndex("ReporterId");
 
@@ -315,6 +328,9 @@ namespace Forum.Data.Migrations
                     b.Property<string>("Author")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -547,11 +563,17 @@ namespace Forum.Data.Migrations
                         .WithMany("Replies")
                         .HasForeignKey("AncestorId");
 
+                    b.HasOne("Forum.Data.Models.ForumUser", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId");
+
                     b.HasOne("Forum.Data.Models.ForumThread", null)
                         .WithMany("Posts")
                         .HasForeignKey("ForumThreadId");
 
                     b.Navigation("Ancestor");
+
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("Forum.Data.Models.ForumThread", b =>
@@ -599,11 +621,17 @@ namespace Forum.Data.Migrations
                         .WithMany()
                         .HasForeignKey("ReportedId");
 
+                    b.HasOne("Forum.Data.Models.ForumPost", "ReportedPost")
+                        .WithMany()
+                        .HasForeignKey("ReportedPostId");
+
                     b.HasOne("Forum.Data.Models.ForumUser", "Reporter")
                         .WithMany()
                         .HasForeignKey("ReporterId");
 
                     b.Navigation("Reported");
+
+                    b.Navigation("ReportedPost");
 
                     b.Navigation("Reporter");
                 });

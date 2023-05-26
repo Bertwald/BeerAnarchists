@@ -6,7 +6,7 @@ public class ForumPost {
     public required string Content { get; set; }
     public DateTime Created { get; set; }
     public virtual ForumUser Author { get; set; } = null!;
-    public virtual IEnumerable<ForumPost> Replies { get; set; } = Enumerable.Empty<ForumPost>();
-    public virtual IEnumerable<Reaction> Reactions { get; set; } = Enumerable.Empty<Reaction>();
+    public virtual IEnumerable<ForumPost> Replies { get; set; }
+    public virtual IEnumerable<Reaction> Reactions { get; set; }
     public virtual ForumPost? Ancestor { get; set; }
 }

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Forum.Data;
-public interface ISubforums {
+public interface ISubforum {
     public SubForum GetById(int id);
     public IEnumerable<SubForum> GetSubforums();
     public Task Create(SubForum subForum);

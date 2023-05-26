@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Forum.Data;
-public interface IForumThreads {
+namespace Forum.Services;
+public class ForumService {
+
 }

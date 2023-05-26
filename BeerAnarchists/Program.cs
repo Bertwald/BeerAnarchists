@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Forum.Data.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace BeerAnarchists;
 
@@ -28,6 +29,8 @@ public class Program {
         builder.Services.AddScoped<Forum.Services.AdminService>();
         builder.Services.AddScoped<Controllers.TestController>();
         builder.Services.AddScoped<Forum.Data.ForumDbContext>();
+        builder.Services.AddScoped<ISubforum, Forum.Services.SubforumService>();
+
 
         builder.Services.ConfigureApplicationCookie(options => {
             // Cookie settings

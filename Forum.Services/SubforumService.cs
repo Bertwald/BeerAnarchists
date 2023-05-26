@@ -4,12 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace Forum.Services;
-public sealed class SubforumService : ISubforums {
+public sealed class SubforumService : ISubforum {
+    #region Fields
     private readonly ForumDbContext _context;
-
+    #endregion
+    #region Constructors
     public SubforumService(ForumDbContext context) {
         _context = context;
     }
+    #endregion
 
     public Task Create(SubForum subForum) {
         throw new NotImplementedException();
@@ -20,7 +23,7 @@ public sealed class SubforumService : ISubforums {
     }
 
     public SubForum GetById(int id) {
-        throw new NotImplementedException();
+        return _context.Subfora.Where(x => x.Id == id).Include(x => x.ForumThreads).FirstOrDefault();
     }
 
     public IEnumerable<SubForum> GetSubforums() {
