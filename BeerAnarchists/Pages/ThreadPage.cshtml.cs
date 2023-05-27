@@ -13,7 +13,7 @@ public class ThreadPageModel : PageModel {
     internal IEnumerable<ThreadModel> ForumThreads { get; set; } = Enumerable.Empty<ThreadModel>();
 
     private ForumDbContext _dbContext;
-    private ISubforum _subforumService;
+    private readonly ISubforum _subforumService;
 
     public ThreadPageModel(ForumDbContext context, ISubforum subforumService) {
         _dbContext = context;
@@ -38,10 +38,12 @@ public class ThreadPageModel : PageModel {
             .Include(x => x.ForumThreads).ThenInclude(t => t.Posts)
             .Where(x => x.Id == id)
             .SelectMany(x => x.ForumThreads)
+            .AsEnumerable()
             .Select(x => new ThreadModel() {
              Description = x.Description,
              Id = x.Id,
              Title = x.Name,
+             Posts = x.Posts,
              PostCount = x.Posts.Count(),
          }).ToList();
 
@@ -63,6 +65,7 @@ public class ThreadPageModel : PageModel {
 public class ThreadModel {
 public int Id { get; set; }
 public int PostCount { get; set; }
+public IEnumerable<ForumPost> Posts { get; set; }
 public string? Title { get; set; }
 public DateTime LastPost { get; set; }
 public string LastPoster { get; set; }

@@ -1,4 +1,53 @@
 ﻿@page
 @model BeerAnarchists.Pages.ThreadPageModel
 @{
+  ViewData["Title"] = "SubForum " + Model.SubForum.Title;
+
 }
+@functions{
+  void DisplayPostsAsTree(IEnumerable<Forum.Data.Models.ForumPost> posts, int alternation, int depth = 0) {
+        @foreach (var post in posts)
+        {
+          //class="border-start border-secondary border-3"
+                <div style="padding-left:@(depth * 20)px;">
+                    @{
+                        DisplayPost(post, alternation*2+depth%2);
+                      }
+                </div>
+                @if (post.Replies != null && post.Replies.Any())
+                {
+                    DisplayPostsAsTree(post.Replies, alternation, depth+1);
+                }
+        }
+    }
+    void DisplayPost(Forum.Data.Models.ForumPost post, int colorIndex) {
+    var Color = new string[]{ "#999999", "#6B6B6B", "#808080", "#5C5C5C" }[colorIndex];
+      <div class="border-start border-secondary border-1" style="background-color: @Color;">
+      <div>
+      <p>
+      @post.Author @(post.Ancestor == null ? "wrote:" : "replied:")
+      </p>
+      </div>
+      <div class="border border-dark rounded">
+      @post.Content
+      </div>
+      <div>
+      <p>
+      @post.Created
+      </p>
+      </div>
+      </div>
+    }
+}
+<div>
+    <h3 class="display-4 text-center">Welcome to the Beer-Anarchists Forum</h3>
+    <div class="text-left">
+        @{
+            int outerAlternation = 0;
+        }
+        @foreach (var thread in Model.ForumThreads) {
+            DisplayPostsAsTree(thread.Posts.Where(x => x.Ancestor is null), outerAlternation, 0);
+            outerAlternation = outerAlternation++ % 2;
+        }
+    </div>
+</div>
