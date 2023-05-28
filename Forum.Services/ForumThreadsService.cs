@@ -1,10 +1,26 @@
 ﻿using Forum.Data;
+using Forum.Data.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Forum.Services;
-internal sealed class ForumThreadsService : IForumThread {
+public sealed class ForumThreadsService : IForumThread {
+    private ForumDbContext _context;
+
+    public ForumThreadsService(ForumDbContext context) {
+        _context = context;
+    }
+
+    public ForumThread GetThreadById(int id) {
+        return _context.ForumThreads
+            .Include(x => x.Posts)
+            .ThenInclude(p => p.Author)
+            .Where(x => x.Id == id)
+            .FirstOrDefault();
+    }
 }

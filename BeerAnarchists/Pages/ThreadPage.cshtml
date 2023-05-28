@@ -1,8 +1,7 @@
 ﻿@page
 @model BeerAnarchists.Pages.ThreadPageModel
 @{
-  ViewData["Title"] = "SubForum " + Model.SubForum.Title;
-
+  ViewData["Title"] = Model.Title;
 }
 @functions{
   void DisplayPostsAsTree(IEnumerable<Forum.Data.Models.ForumPost> posts, int alternation, int depth = 0) {
@@ -47,8 +46,8 @@
         @{
             int outerAlternation = 0;
         }
-        @foreach (var thread in Model.ForumThreads) {
-            DisplayPostsAsTree(thread.Posts.Where(x => x.Ancestor is null), outerAlternation, 0);
+        @if(Model.Posts != null){
+            DisplayPostsAsTree(Model.Posts.Where(x => x.Ancestor is null), outerAlternation, 0);
             outerAlternation = outerAlternation++ % 2;
         }
     </div>

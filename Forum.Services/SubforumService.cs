@@ -27,6 +27,7 @@ public sealed class SubforumService : ISubforum {
             .Where(x => x.Id == id)
             .Include(subforum => subforum.ForumThreads)
             .ThenInclude(thread => thread.Posts)
+            .ThenInclude(post => post.Author)
             .FirstOrDefault();
     }
 

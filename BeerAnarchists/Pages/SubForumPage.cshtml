@@ -9,7 +9,7 @@
       SubForum started by @Model.Author
     </p>
     <table class="table table striped table-dark table-hover" id="indexTable">
-        @foreach (var thread in Model.forumThreads) {
+        @foreach (var thread in Model.ForumThreads) {
             <tr>
               <td>
                 <a asp-page="./ThreadPage" asp-route-id="@thread.Id">
@@ -21,6 +21,18 @@
               </td>
               <td>
                 @thread.Posts.Count()
+              </td>
+              <td>
+                @if (thread.Posts.Count() > 0) {
+                <p>
+                  Last post: @thread.Posts.OrderByDescending(x => x.Created).First().Created <br>
+                  By @(thread.Posts.OrderByDescending(x => x.Created).First().Author.Alias ?? @thread.Posts.OrderByDescending(x => x.Created).First().Author.UserName)
+                        </p>
+                    } else {
+                        <p>
+                          No Posts yet!
+                        </p>
+                    }
               </td>
             </tr>
         }

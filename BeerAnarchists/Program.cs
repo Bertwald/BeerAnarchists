@@ -31,6 +31,7 @@ public class Program {
         builder.Services.AddScoped<Controllers.TestController>();
         builder.Services.AddScoped<Forum.Data.ForumDbContext>();
         builder.Services.AddScoped<ISubforum, Forum.Services.SubforumService>();
+        builder.Services.AddScoped<IForumThread, Forum.Services.ForumThreadsService>();
         builder.Services.AddScoped<IForumPost, Forum.Services.ForumPostService>();
         #endregion
 
