@@ -20,6 +20,8 @@ public sealed class ForumThreadsService : IForumThread {
         return _context.ForumThreads
             .Include(x => x.Posts)
             .ThenInclude(p => p.Author)
+            .Include(x=> x.Posts)
+            .ThenInclude(p => p.Reactions)
             .Where(x => x.Id == id)
             .FirstOrDefault();
     }

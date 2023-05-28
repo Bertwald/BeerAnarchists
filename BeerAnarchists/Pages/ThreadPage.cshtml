@@ -8,7 +8,7 @@
         @foreach (var post in posts)
         {
           //class="border-start border-secondary border-3"
-                <div style="padding-left:@(depth * 20)px;">
+                <div style="padding-left:@(Math.Min(depth * 20, 120))px;">
                     @{
                         DisplayPost(post, alternation*2+depth%2);
                       }
@@ -21,23 +21,49 @@
     }
     void DisplayPost(Forum.Data.Models.ForumPost post, int colorIndex) {
     var Color = new string[]{ "#999999", "#6B6B6B", "#808080", "#5C5C5C" }[colorIndex];
+      <div class="border-start border-secondary border-1" style="background-color:@Color; padding:5px; margin: 5px 0px 5px 0px; ">
+      <div class="row" style="border-bottom: 1px solid black; margin:5px; padding:5px">
+        <div class="col" style="text-align:left">
+          @post.Author @(post.Ancestor == null ? "wrote:" : "replied:")
+        </div>
+        <div class="col" style="text-align:right">
+          #@post.Id
+        </div>
+      </div>
+      <div class="border border-dark rounded" style="background-color:floralwhite; padding:5px 15px 5px 15px">
+        @post.Content
+      </div>
+      <div class="row">
+        <div class="col btn-group-sm">
+        <button type="button" class="btn btn-primary btn-sm">
+          Like 
+          <span class="badge rounded-pill bg-light text-dark"> 
+            @post.Reactions.Where(x => x.Type == Forum.Data.Models.ReactionType.Like).Count()
+          </span>
+        </button>
+        <button type="button" class="btn btn-primary btn-sm">
+          Dislike 
+          <span class="badge rounded-pill bg-light text-dark"> 
+            @post.Reactions.Where(x => x.Type == Forum.Data.Models.ReactionType.Dislike).Count()
+           </span>
+        </button>
+        <button type="button" class="btn btn-primary btn-sm">
+          Heart 
+          <span class="badge rounded-pill bg-light text-dark"> 
+            @post.Reactions.Where(x => x.Type == Forum.Data.Models.ReactionType.Heart).Count()
+          </span>
+        </button>
+        <button type="button" class="btn btn-danger btn-sm">Report!</button>
+        </div>
+        <div class="col" style="text-align:right">
+          <button type="button" class="btn btn-secondary btn-sm">Reply</button>
+        </div>
 
-      <div class="border-start border-secondary border-1" style="background-color: @Color;">
-      <div>
-      <p>
-      @post.Author @(post.Ancestor == null ? "wrote:" : "replied:")
-      </p>
-      </div>
-      <div class="border border-dark rounded">
-      @post.Content
-      </div>
-      <div>
-      <p>
-      @post.Created
-      </p>
+        <div class="col" style="text-align:right">
+          @post.Created
+        </div>
       </div>
       </div>
-
     }
 }
 <div>
