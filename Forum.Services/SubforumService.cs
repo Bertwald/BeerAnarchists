@@ -23,7 +23,11 @@ public sealed class SubforumService : ISubforum {
     }
 
     public SubForum GetById(int id) {
-        return _context.Subfora.Where(x => x.Id == id).Include(x => x.ForumThreads).FirstOrDefault();
+        return _context.Subfora
+            .Where(x => x.Id == id)
+            .Include(subforum => subforum.ForumThreads)
+            .ThenInclude(thread => thread.Posts)
+            .FirstOrDefault();
     }
 
     public IEnumerable<SubForum> GetSubforums() {

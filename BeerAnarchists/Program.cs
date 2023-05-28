@@ -25,11 +25,14 @@ public class Program {
         //    .AddEntityFrameworkStores<ForumDbContext>()
         //    .AddDefaultTokenProviders();
 
+        #region Register Services
         builder.Services.AddScoped<Forum.Services.JwtTokenService>();
         builder.Services.AddScoped<Forum.Services.AdminService>();
         builder.Services.AddScoped<Controllers.TestController>();
         builder.Services.AddScoped<Forum.Data.ForumDbContext>();
         builder.Services.AddScoped<ISubforum, Forum.Services.SubforumService>();
+        builder.Services.AddScoped<IForumPost, Forum.Services.ForumPostService>();
+        #endregion
 
 
         builder.Services.ConfigureApplicationCookie(options => {

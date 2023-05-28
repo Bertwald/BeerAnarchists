@@ -22,6 +22,7 @@
     }
     void DisplayPost(Forum.Data.Models.ForumPost post, int colorIndex) {
     var Color = new string[]{ "#999999", "#6B6B6B", "#808080", "#5C5C5C" }[colorIndex];
+
       <div class="border-start border-secondary border-1" style="background-color: @Color;">
       <div>
       <p>
@@ -37,6 +38,7 @@
       </p>
       </div>
       </div>
+
     }
 }
 <div>
@@ -50,4 +52,6 @@
             outerAlternation = outerAlternation++ % 2;
         }
     </div>
+
+
 </div>

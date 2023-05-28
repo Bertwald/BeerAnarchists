@@ -14,10 +14,12 @@ public class ThreadPageModel : PageModel {
 
     private ForumDbContext _dbContext;
     private readonly ISubforum _subforumService;
+    private readonly IForumPost _postService;
 
-    public ThreadPageModel(ForumDbContext context, ISubforum subforumService) {
+    public ThreadPageModel(ForumDbContext context, ISubforum subforumService, IForumPost postService) {
         _dbContext = context;
         _subforumService = subforumService;
+        _postService = postService;
     }
 
     public async Task<IActionResult> OnGet(int id)

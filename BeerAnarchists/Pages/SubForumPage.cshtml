@@ -1,0 +1,29 @@
+﻿@page
+@model BeerAnarchists.Pages.SubForumPageModel
+@{
+  ViewData["Title"] = Model.Title;
+}
+<div class="text-center">
+    <h1 class="display-4">@Model.Description</h1>
+    <p>
+      SubForum started by @Model.Author
+    </p>
+    <table class="table table striped table-dark table-hover" id="indexTable">
+        @foreach (var thread in Model.forumThreads) {
+            <tr>
+              <td>
+                <a asp-page="./ThreadPage" asp-route-id="@thread.Id">
+                  @thread.Name
+                </a>
+              </td>
+              <td>
+                @thread.Description
+              </td>
+              <td>
+                @thread.Posts.Count()
+              </td>
+            </tr>
+        }
+
+    </table>
+</div>

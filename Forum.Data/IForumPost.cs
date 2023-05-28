@@ -17,7 +17,7 @@ public interface IForumPost {
     public IEnumerable<ForumPost> Search(string query);
     public Task Add(ForumPost post);
     public Task Delete(int id);
-    public Task AddReply(ForumPost reply);
+    public Task AddReply(int parentId, ForumPost reply);
     // string filepath?
-    public Task AddImage(string url);
+    public Task AddImage(int postId, string url);
 }
