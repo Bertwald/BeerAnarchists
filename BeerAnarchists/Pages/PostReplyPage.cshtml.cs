@@ -20,6 +20,7 @@ public class PostReplyPageModel : PageModel {
     public string? PostImageUrl { get; set; }
     public string? PostContent { get; set; }
     public ForumUser PostAuthor { get; set; }
+    public string AgeString { get; set; }
     #endregion
     #region InputFields
     [BindProperty]
@@ -57,6 +58,9 @@ public class PostReplyPageModel : PageModel {
             PostContent = originalPost.Content;
             PostAuthor = originalPost.Author;
             PostImageUrl = originalPost.ImageUrl;
+            AgeString = (DateTime.Now - originalPost.Created).Days > 1 ? (DateTime.Now - originalPost.Created).Days.ToString() + " days "
+                        : (DateTime.Now - originalPost.Created).Hours > 1 ? (DateTime.Now - originalPost.Created).Hours.ToString() + " hours "
+                        : (DateTime.Now - originalPost.Created).Minutes.ToString() + " minutes ";
         }
 
         return Page();

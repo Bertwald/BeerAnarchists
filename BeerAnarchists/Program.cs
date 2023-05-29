@@ -6,11 +6,15 @@ using Microsoft.IdentityModel.Tokens;
 using Forum.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
+using System.Text.RegularExpressions;
 
 namespace BeerAnarchists;
 
 public class Program {
     public static void Main(string[] args) {
+
         var builder = WebApplication.CreateBuilder(args);
         var connectionString = builder.Configuration.GetConnectionString("ForumDbContextConnection") ?? throw new InvalidOperationException("Connection string 'ForumDbContextConnection' not found.");
 
@@ -50,13 +54,13 @@ public class Program {
         builder.Services.AddRazorPages();
         builder.Services.AddAuthentication()
             .AddCookie();
-            //.AddJwtBearer();
+        //.AddJwtBearer();
         builder.Services.AddAuthorization(
-            //options => {
-            //    options.FallbackPolicy = new AuthorizationPolicyBuilder()
-            //        .RequireAuthenticatedUser()
-            //        .Build();
-            //}
+        //options => {
+        //    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        //        .RequireAuthenticatedUser()
+        //        .Build();
+        //}
         );
         /*
         builder.Services.AddAuthentication(options => {
@@ -98,6 +102,17 @@ public class Program {
         app.MapRazorPages();
 
         app.MapControllers();
+
+
+        var supportedCultures = new[]{
+            new CultureInfo("en-US"),
+        };
+
+        app.UseRequestLocalization(new RequestLocalizationOptions {
+            DefaultRequestCulture = new RequestCulture(new CultureInfo("en-US")),
+            SupportedCultures = supportedCultures,
+            SupportedUICultures = supportedCultures
+        });
 
         app.Run();
     }

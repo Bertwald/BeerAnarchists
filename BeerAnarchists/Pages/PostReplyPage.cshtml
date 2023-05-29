@@ -1,11 +1,25 @@
 ﻿@page
+@using System.Globalization
 @model BeerAnarchists.Pages.PostReplyPageModel
 @{
   ViewData["Title"] = "Reply";
 }
 
-<div>
+<div class="row">
+  <div class="card m-2" style="width: 18rem">
+                <div class="card-header">
+                  <p>Skunk är dumt</p>
+                  <p>Det luktar illa här inne</p>  
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">@Model.PostContent</h5>
+                    <p class="card-text">@Model.PostImageUrl</p>
+                </div>
+                <div class="card-footer text-muted">
+                    <p>@Model.AgeString ago</p>
+                </div>
 
+            </div>
 </div>
 
 <div>
@@ -14,7 +28,7 @@
         <label asp-for="ReplyContent" class="form-label"></label>
         <textarea asp-for="ReplyContent" class="form-control" cols="40" rows="5"></textarea>
 
-        <label asp-for="UploadedImage" class="form-label"></label>
+        <label asp-for="UploadedImage" class="form-label">Attach Image</label>
         <input type="file" class="form-control" name="UploadedImage">
         @Html.HiddenFor(m => m.PostId)
         @Html.HiddenFor(m => m.ReplyAuthorId)
