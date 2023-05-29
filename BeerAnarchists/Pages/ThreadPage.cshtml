@@ -4,13 +4,13 @@
   ViewData["Title"] = Model.Title;
 }
 @functions{
-  void DisplayPostsAsTree(IEnumerable<Forum.Data.Models.ForumPost> posts, int alternation, int depth = 0) {
+  async void DisplayPostsAsTree(IEnumerable<Forum.Data.Models.ForumPost> posts, int alternation, int depth = 0) {
         @foreach (var post in posts)
         {
           //class="border-start border-secondary border-3"
                 <div style="padding-left:@(Math.Min(depth * 20, 120))px;">
                     @{
-                        DisplayPost(post, alternation*2+depth%2);
+                        await DisplayPost(post, alternation*2+depth%2);
                       }
                 </div>
                 @if (post.Replies != null && post.Replies.Any())
@@ -19,7 +19,7 @@
                 }
         }
     }
-    void DisplayPost(Forum.Data.Models.ForumPost post, int colorIndex) {
+    async Task DisplayPost(Forum.Data.Models.ForumPost post, int colorIndex) {
     var Color = new string[]{ "#999999", "#6B6B6B", "#808080", "#5C5C5C" }[colorIndex];
       <div class="border-start border-secondary border-1" style="background-color:@Color; padding:5px; margin: 5px 0px 5px 0px; ">
       <div class="row" style="border-bottom: 1px solid black; margin:5px; padding:5px">
@@ -56,7 +56,10 @@
         <button type="button" class="btn btn-danger btn-sm">Report!</button>
         </div>
         <div class="col" style="text-align:right">
-          <button type="button" class="btn btn-secondary btn-sm">Reply</button>
+                    @if (User.Claims.Any())
+                    {
+                        <a class="btn btn-secondary btn-sm" asp-page="./PostReplyPage" asp-route-postId="@post.Id">Reply</a>
+                    }
         </div>
 
         <div class="col" style="text-align:right">

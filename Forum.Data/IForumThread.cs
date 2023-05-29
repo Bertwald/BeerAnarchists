@@ -8,4 +8,6 @@ using System.Threading.Tasks;
 namespace Forum.Data;
 public interface IForumThread {
     public ForumThread GetThreadById(int id);
+    public int GetThreadIdFromPostId(int postId);
+    public Task UpdateThread(ForumThread thread);
 }

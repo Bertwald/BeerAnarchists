@@ -39,7 +39,7 @@ public class Program {
         builder.Services.ConfigureApplicationCookie(options => {
             // Cookie settings
             options.Cookie.HttpOnly = true;
-            options.ExpireTimeSpan = TimeSpan.FromMinutes(2);
+            options.ExpireTimeSpan = TimeSpan.FromDays(1);
 
             options.LoginPath = "/Identity/Account/Login";
             options.AccessDeniedPath = "/Identity/Account/AccessDenied";

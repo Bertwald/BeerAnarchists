@@ -11,8 +11,10 @@ namespace Forum.Services;
 public class ForumPostService : IForumPost {
 
     private ForumDbContext _dbcontext;
-    public ForumPostService(ForumDbContext dbcontext) {
+    private IForumThread _threadService;
+    public ForumPostService(ForumDbContext dbcontext, IForumThread threadService) {
         _dbcontext = dbcontext;
+        _threadService = threadService;
     }
 
     public async Task Add(ForumPost post) {
