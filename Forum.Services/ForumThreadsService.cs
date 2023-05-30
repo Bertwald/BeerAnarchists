@@ -16,6 +16,15 @@ public sealed class ForumThreadsService : IForumThread {
         _context = context;
     }
 
+    public async Task AddThread(ForumThread newThread) {
+
+        if (_context.ForumThreads == null) {
+            return;
+        }
+        _context.ForumThreads.Add(newThread);
+        await _context.SaveChangesAsync();
+    }
+
     public ForumThread GetThreadById(int id) {
         return _context.ForumThreads
             .Include(x => x.Posts)

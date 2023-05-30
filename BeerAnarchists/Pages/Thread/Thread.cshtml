@@ -1,5 +1,5 @@
 ﻿@page
-@model BeerAnarchists.Pages.ThreadPageModel
+@model BeerAnarchists.Pages.Thread.ThreadModel
 @{
   ViewData["Title"] = Model.Title;
 }
@@ -58,7 +58,7 @@
         <div class="col" style="text-align:right">
                     @if (User.Claims.Any())
                     {
-                        <a class="btn btn-secondary btn-sm" asp-page="./PostReplyPage" asp-route-postId="@post.Id">Reply</a>
+                        <a class="btn btn-secondary btn-sm" asp-page="/Post/PostReply" asp-route-postId="@post.Id">Reply</a>
                     }
         </div>
 

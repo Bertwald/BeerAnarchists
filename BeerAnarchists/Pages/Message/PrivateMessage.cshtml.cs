@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace BeerAnarchists.Pages;
+namespace BeerAnarchists.Pages.Message;
 
-public class AboutModel : PageModel
+public class PrivateMessageModel : PageModel
 {
     public void OnGet()
     {

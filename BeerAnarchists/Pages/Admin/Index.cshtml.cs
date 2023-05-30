@@ -1,22 +1,12 @@
+using Forum.Data.Models;
+using Forum.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Forum.Data.Models;
-using System.Text.Json;
-using Forum.Services;
-using System.Security.Claims;
-using Azure.Identity;
-using Microsoft.IdentityModel.JsonWebTokens;
-using Microsoft.Net.Http.Headers;
-using NuGet.Protocol;
-using NuGet.Common;
 using System.Net.Http.Headers;
-using BeerAnarchists.Controllers;
-using Azure;
-using System.Security.AccessControl;
+using System.Text.Json;
 
 namespace BeerAnarchists.Pages.RoleAdmin;
 
@@ -51,7 +41,7 @@ public class IndexModel : PageModel
     private readonly AdminService _adminService;
     //private readonly TestController _testController;
 
-    private Task<IEnumerable<SubForum>> _subForums;
+    private Task<IEnumerable<Forum.Data.Models.SubForum>> _subForums;
 
 
     public IndexModel(RoleManager<IdentityRole> roleManager, UserManager<ForumUser> userManager, JwtTokenService jwt, AdminService adm)
@@ -62,14 +52,14 @@ public class IndexModel : PageModel
         _adminService= adm;
     }
 
-    public async Task<IEnumerable<SubForum>> GetSubforums() {
-        IEnumerable<SubForum> result = Enumerable.Empty<SubForum>();
+    public async Task<IEnumerable<Forum.Data.Models.SubForum>> GetSubforums() {
+        IEnumerable<Forum.Data.Models.SubForum> result = Enumerable.Empty<Forum.Data.Models.SubForum>();
         using (var client = new HttpClient()) {
             client.BaseAddress = new Uri("https://localhost:7174/");
             HttpResponseMessage response = await client.GetAsync("api/SubForums");
             if (response.IsSuccessStatusCode) {
                 string responseString = await response.Content.ReadAsStringAsync();
-                result = JsonSerializer.Deserialize<List<SubForum>>(responseString);
+                result = JsonSerializer.Deserialize<List<Forum.Data.Models.SubForum>>(responseString);
             }
         }
         return result;
@@ -79,7 +69,7 @@ public class IndexModel : PageModel
         using (var client = new HttpClient()) {
             var currentUser = await _userManager.GetUserAsync(User);
             //var username = currentUser.Claims.Where(x => x.Type == "preferred-username").Select(x => x.Value).FirstOrDefault();
-            SubForum subForum = new SubForum() { Author = currentUser?.Alias ?? currentUser?.UserName ?? "PlaceHolder", Title = name };
+            Forum.Data.Models.SubForum subForum = new Forum.Data.Models.SubForum() { Author = currentUser?.Alias ?? currentUser?.UserName ?? "PlaceHolder", Title = name };
             var json = JsonSerializer.Serialize(subForum);
             StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
             client.BaseAddress = new Uri("https://localhost:7174");

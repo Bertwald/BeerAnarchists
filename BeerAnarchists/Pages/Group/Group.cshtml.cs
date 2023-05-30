@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace BeerAnarchists.Pages;
+namespace BeerAnarchists.Pages.Group;
 
-public class AboutModel : PageModel
+public class GroupModel : PageModel
 {
     public void OnGet()
     {

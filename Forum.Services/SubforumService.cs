@@ -14,6 +14,17 @@ public sealed class SubforumService : ISubforum {
     }
     #endregion
 
+    public async Task AddThread(SubForum forum, ForumThread thread) {
+        forum.ForumThreads.Append(thread).ToList();
+        _context.Entry(forum).State = EntityState.Modified;
+        try {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException) {
+                throw;
+        }
+    }
+
     public Task Create(SubForum subForum) {
         throw new NotImplementedException();
     }

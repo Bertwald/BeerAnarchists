@@ -1,12 +1,11 @@
 using Forum.Data;
 using Forum.Data.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Hosting;
 
-namespace BeerAnarchists.Pages;
+namespace BeerAnarchists.Pages.SubForum;
 
-public class SubForumPageModel : PageModel {
+public class SubForumModel : PageModel
+{
     public int Id { get; set; }
     public string Title { get; set; }
     public string? Description { get; set; }
@@ -17,13 +16,16 @@ public class SubForumPageModel : PageModel {
 
     private readonly ISubforum _subforum;
 
-    public SubForumPageModel(ISubforum subforum) {
+    public SubForumModel(ISubforum subforum)
+    {
         _subforum = subforum;
     }
 
-    public void OnGet(int id) {
+    public void OnGet(int id)
+    {
         var subForum = _subforum.GetById(id);
-        if (subForum != null) {
+        if (subForum != null)
+        {
             Id = id;
             Title = subForum.Title;
             Description = subForum.Description ?? "No description yet";
@@ -33,9 +35,11 @@ public class SubForumPageModel : PageModel {
         }
     }
 
+    /*
     internal class ExpandedThread : ForumThread {
         public ForumUser LastPoster { get; set; }
         public DateTime LastPost { get; set; }
     }
+    */
 
 }

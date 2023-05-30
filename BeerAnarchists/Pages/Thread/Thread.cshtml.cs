@@ -1,14 +1,12 @@
 using Forum.Data;
 using Forum.Data.Models;
-using Forum.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using static BeerAnarchists.Pages.IndexModel;
 
-namespace BeerAnarchists.Pages;
+namespace BeerAnarchists.Pages.Thread;
 
-public class ThreadPageModel : PageModel {
+public class ThreadModel : PageModel
+{
 
     public int Id { get; set; }
     public int PostCount { get; set; }
@@ -26,7 +24,8 @@ public class ThreadPageModel : PageModel {
     private readonly IForumPost _postService;
     private readonly IForumThread _threadService;
 
-    public ThreadPageModel(ForumDbContext context, ISubforum subforumService, IForumPost postService, IForumThread threadService) {
+    public ThreadModel(ForumDbContext context, ISubforum subforumService, IForumPost postService, IForumThread threadService)
+    {
         _dbContext = context;
         _subforumService = subforumService;
         _postService = postService;
@@ -35,13 +34,15 @@ public class ThreadPageModel : PageModel {
 
     public async Task<IActionResult> OnGet(int id)
     {
-        if(id == null) {
+        if (id == null)
+        {
             return NotFound();
         }
 
         var threadData = _threadService.GetThreadById(id);
 
-        if(threadData != null) {
+        if (threadData != null)
+        {
             Id = threadData.Id;
             PostCount = threadData.Posts.Count();
             Posts = threadData.Posts.ToList();
@@ -91,6 +92,8 @@ public class ThreadPageModel : PageModel {
     }
 }
 
+
+/*
 public class ThreadModel {
 public int Id { get; set; }
 public int PostCount { get; set; }
@@ -100,3 +103,4 @@ public DateTime LastPost { get; set; }
 public string LastPoster { get; set; }
 public string? Description { get; set; }
 }
+*/

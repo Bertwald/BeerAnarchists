@@ -10,7 +10,7 @@
         @foreach (var subFora in Model.SubForums) {
             <tr>
               <td>
-                <a asp-page="./SubForumPage" asp-route-id="@subFora.Id">
+                <a asp-page="./SubForum/SubForum" asp-route-id="@subFora.Id">
                   @subFora.Title
                 </a>
               </td>

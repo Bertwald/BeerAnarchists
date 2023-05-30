@@ -1,11 +1,13 @@
 ﻿@page
 @using System.Globalization
-@model BeerAnarchists.Pages.PostReplyPageModel
+@model BeerAnarchists.Pages.Post.PostReplyModel
 @{
   ViewData["Title"] = "Reply";
 }
 
 <div class="row">
+
+
   <div class="card m-2" style="width: 18rem">
                 <div class="card-header">
                   <p>Skunk är dumt</p>
@@ -25,7 +27,7 @@
 <div>
   <form method="post" enctype="multipart/form-data">
 
-        <label asp-for="ReplyContent" class="form-label"></label>
+        <label asp-for="ReplyContent" class="form-label">Reply</label>
         <textarea asp-for="ReplyContent" class="form-control" cols="40" rows="5"></textarea>
 
         <label asp-for="UploadedImage" class="form-label">Attach Image</label>

@@ -1,14 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Forum.Data;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Forum.Data.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
-using System.Text.RegularExpressions;
 
 namespace BeerAnarchists;
 
@@ -107,7 +101,6 @@ public class Program {
         var supportedCultures = new[]{
             new CultureInfo("en-US"),
         };
-
         app.UseRequestLocalization(new RequestLocalizationOptions {
             DefaultRequestCulture = new RequestCulture(new CultureInfo("en-US")),
             SupportedCultures = supportedCultures,

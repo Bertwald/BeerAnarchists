@@ -1,12 +1,8 @@
 ﻿using Forum.Data;
 using Forum.Data.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Newtonsoft.Json;
-using System.Net;
 using System.Net.Http.Headers;
-using System.Text;
 
 namespace BeerAnarchists.Pages;
 public class IndexModel : PageModel {
