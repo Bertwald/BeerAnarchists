@@ -1,0 +1,15 @@
+﻿@page
+@model BeerAnarchists.Pages.SubForum.NewSubForumModel
+@{
+
+}
+<form method="post" enctype="multipart/form-data">
+
+        <label asp-for="SubForumName" class="form-label">Name Subforum</label>
+        <textarea asp-for="SubForumName" class="form-control" cols="40" rows="1"></textarea>
+
+        <label asp-for="SubForumDescription" class="form-label">Brief Description of contents</label>
+        <textarea asp-for="SubForumDescription" class="form-control" cols="40" rows="2"></textarea>
+        @Html.HiddenFor(m => m.UserId)
+        <input type="submit" class="btn btn-success" value="Add subforum">
+</form>

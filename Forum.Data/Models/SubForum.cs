@@ -12,5 +12,5 @@ public class SubForum {
     public string? Description { get; set; }
     public required string Author { get; set; }
     public string? ImageUrl { get; set; }
-    public virtual IEnumerable<ForumThread> ForumThreads { get; set; }
+    public virtual IEnumerable<ForumThread> ForumThreads { get; set; } = new List<ForumThread>();
 }

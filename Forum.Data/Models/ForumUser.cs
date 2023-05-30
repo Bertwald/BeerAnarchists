@@ -10,8 +10,8 @@ public class ForumUser : IdentityUser {
     public DateTime MemberSince { get; set; }
     public DateTime? LastPost { get; set; }
     public virtual Avatar? Avatar { get; set; }
-    public virtual IEnumerable<ForumUser> Friends { get; set; }
-    public virtual IEnumerable<ForumUser> Ignored { get; set; }
-    public virtual IEnumerable<Group> MemberGroups { get; set; }
-    public virtual IEnumerable<Group> OwnedGroups { get; set; }
+    public virtual IEnumerable<ForumUser> Friends { get; set; } = new List<ForumUser>();
+    public virtual IEnumerable<ForumUser> Ignored { get; set; } = new List<ForumUser>();
+    public virtual IEnumerable<Group> MemberGroups { get; set; } = new List<Group>();
+    public virtual IEnumerable<Group> OwnedGroups { get; set; } = new List<Group>();
 }

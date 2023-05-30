@@ -13,5 +13,5 @@ public class PrivateMessage : Message {
 }
 public class GroupMessage : Message {
     public virtual Group? RecievingGroup { get; set; }
-    public required virtual IEnumerable<ForumUser> Recievers { get; set; }
+    public required virtual IEnumerable<ForumUser> Recievers { get; set; } = new List<ForumUser>();
 }

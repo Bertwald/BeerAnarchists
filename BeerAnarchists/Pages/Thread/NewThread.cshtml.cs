@@ -1,3 +1,4 @@
+using Forum.Data;
 using Forum.Data.Models;
 using Forum.Services;
 using Microsoft.AspNetCore.Identity;
@@ -10,10 +11,10 @@ namespace BeerAnarchists.Pages.Thread;
 public class NewThreadModel : PageModel
 {
     private readonly UserManager<Forum.Data.Models.ForumUser> _userManager;
-    private readonly ForumThreadsService _forumThreadsService;
-    private readonly SubforumService _subforumService;
+    private readonly IForumThread _forumThreadsService;
+    private readonly ISubforum _subforumService;
 
-    public NewThreadModel(UserManager<ForumUser> userManager, ForumThreadsService forumThreadsService, SubforumService subforumService) {
+    public NewThreadModel(UserManager<ForumUser> userManager, IForumThread forumThreadsService, ISubforum subforumService) {
         _userManager = userManager;
         _forumThreadsService = forumThreadsService;
         _subforumService = subforumService;
@@ -26,9 +27,9 @@ public class NewThreadModel : PageModel
     [BindProperty]
     public int SubForumId { get; set; }
     [BindProperty]
-    public string SubForumName { get; set; }
+    public string ThreadName { get; set; }
     [BindProperty]
-    public string? SubForumDescription { get; set; }
+    public string? ThreadDescription { get; set; }
     #endregion
 
 
@@ -51,11 +52,11 @@ public class NewThreadModel : PageModel
         }
 
         var newThread = new ForumThread() {
-            Name = SubForumName,
-            Description = SubForumDescription,
+            Name = ThreadName,
+            Description = ThreadDescription,
         };
 
-        var userRequest = _userManager.FindByIdAsync(UserId);
+        var user = await _userManager.FindByIdAsync(UserId);
         var subForum = _subforumService.GetById(SubForumId);
 
         await _forumThreadsService.AddThread(newThread);

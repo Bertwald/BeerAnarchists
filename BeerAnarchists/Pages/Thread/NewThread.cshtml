@@ -1,5 +1,19 @@
 ﻿@page
 @model BeerAnarchists.Pages.Thread.NewThreadModel
 @{
-
+  ViewData["Title"] = "Creating new thread";
 }
+
+<div>
+  <form method="post" enctype="multipart/form-data">
+
+        <label asp-for="ThreadName" class="form-label">Name Subforum</label>
+        <textarea asp-for="ThreadName" class="form-control" cols="40" rows="1"></textarea>
+
+        <label asp-for="ThreadDescription" class="form-label">Brief Description of contents</label>
+        <textarea asp-for="ThreadDescription" class="form-control" cols="40" rows="2"></textarea>
+        @Html.HiddenFor(m => m.SubForumId)
+        @Html.HiddenFor(m => m.UserId)
+        <input type="submit" class="btn btn-success" value="Add thread to subforum">
+</form>
+</div>

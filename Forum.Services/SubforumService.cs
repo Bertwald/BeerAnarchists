@@ -15,7 +15,7 @@ public sealed class SubforumService : ISubforum {
     #endregion
 
     public async Task AddThread(SubForum forum, ForumThread thread) {
-        forum.ForumThreads.Append(thread).ToList();
+        forum.ForumThreads = forum.ForumThreads.Append(thread).ToList();
         _context.Entry(forum).State = EntityState.Modified;
         try {
             await _context.SaveChangesAsync();
@@ -25,8 +25,12 @@ public sealed class SubforumService : ISubforum {
         }
     }
 
-    public Task Create(SubForum subForum) {
-        throw new NotImplementedException();
+    public async Task Create(SubForum subForum) {
+        if (_context.Subfora == null) {
+            return;
+        }
+        _context.Subfora.Add(subForum);
+        await _context.SaveChangesAsync();
     }
 
     public Task Delete(int id) {
