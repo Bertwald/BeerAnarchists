@@ -1,6 +1,5 @@
 using Forum.Data;
 using Forum.Data.Models;
-using Forum.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,8 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BeerAnarchists.Pages.SubForum;
 [Authorize(Roles = "Admin")]
-public class NewSubForumModel : PageModel
-{
+public class NewSubForumModel : PageModel {
     private readonly UserManager<Forum.Data.Models.ForumUser> _userManager;
     private readonly ISubforum _subForumService;
 
@@ -27,9 +25,8 @@ public class NewSubForumModel : PageModel
         _subForumService = subForumService;
     }
 
-    public async Task<ActionResult> OnGet(string userId)
-    {
-        if(userId == null || userId == string.Empty) {
+    public async Task<ActionResult> OnGet(string userId) {
+        if (userId == null || userId == string.Empty) {
             return BadRequest();
         }
         UserId = userId;

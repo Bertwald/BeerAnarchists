@@ -1,10 +1,8 @@
 using Forum.Data;
 using Forum.Data.Models;
-using Forum.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Diagnostics.Contracts;
 
 namespace BeerAnarchists.Pages.Thread;
 
