@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<Forum.Data.Models.ForumUser> SignInManager
+@inject UserManager<Forum.Data.Models.ForumUser> UserManager
+@inject RoleManager<IdentityRole> RoleManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -10,9 +16,9 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom box-shadow mb-3" style="background-color: #4b0076;">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">BeerAnarchists</a>
+                <a class="navbar-brand main-nav" asp-area="" asp-page="/Index" style="color:gold">BeerAnarchists</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -20,19 +26,56 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                            <a class="nav-link" asp-area="" asp-page="/Index" style="color:#f6d56d">Home</a>
+                        </li>
+                        @*Only For logged in users*@
+                        @if(SignInManager.IsSignedIn(User)) {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-page="/Group/Group" style="color:#f6d56d">Groups</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-page="/Message/Inbox" style="color:#f6d56d">Messages</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-page="/Group/Group" style="color:#f6d56d">Profile</a>
+                            </li>
+                        }
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-page="/About" style="color:#f6d56d">About</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Group/Group">Groups</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Admin/Index">Admin</a>
+                            <a class="nav-link" asp-area="" asp-page="/Privacy" style="color:#f6d56d">Privacy</a>
                         </li>
                     </ul>
-                    <partial name="_LoginPartial" />
+                    <ul class="nav navbar-nav navbar-right">
+                        @*Only For Admin*@
+                        @if(SignInManager.IsSignedIn(User) && User.IsInRole("Admin")){
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-page="/Admin/Index" style="color:#f6d56d">Admin</a>
+                        </li>
+                        }
+                        @*Only For logged in users*@
+                        @if(SignInManager.IsSignedIn(User)) {
+                            <li class="nav-item">
+                                <a id="manage" class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage" style="color:#f6d56d">My Account</a>
+                            </li>
+                            <li class="nav-item">
+                                <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })">
+                                  <button id="logout" type="submit" class="nav-link btn btn-link border-0" style="color:#f6d56d">Logout</button>
+                                </form>
+                            </li>
+
+                        }
+                        @*Not Signed In, Register or log in*@
+                        else {
+                                <li class="nav-item">
+                                    <a class="nav-link" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                                </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>

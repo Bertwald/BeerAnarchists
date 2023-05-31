@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Forum.Data;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+using Forum.Data.Models;
 
 namespace BeerAnarchists;
 
@@ -18,7 +19,6 @@ public class Program {
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ForumDbContext>();
 
-
         //builder.Services.AddIdentity<ForumUser, IdentityRole>()
         //    .AddEntityFrameworkStores<ForumDbContext>()
         //    .AddDefaultTokenProviders();
@@ -31,6 +31,7 @@ public class Program {
         builder.Services.AddScoped<ISubforum, Forum.Services.SubforumService>();
         builder.Services.AddScoped<IForumThread, Forum.Services.ForumThreadsService>();
         builder.Services.AddScoped<IForumPost, Forum.Services.ForumPostService>();
+        builder.Services.AddScoped<SignInManager<Forum.Data.Models.ForumUser>>();
         #endregion
 
 
