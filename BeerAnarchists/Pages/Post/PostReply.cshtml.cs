@@ -64,8 +64,7 @@ public class PostReplyModel : PageModel
             AgeString = (DateTime.Now - originalPost.Created).Days > 1 ? (DateTime.Now - originalPost.Created).Days.ToString() + " days "
                         : (DateTime.Now - originalPost.Created).Hours > 1 ? (DateTime.Now - originalPost.Created).Hours.ToString() + " hours "
                         : (DateTime.Now - originalPost.Created).Minutes.ToString() + " minutes ";
-        }
-
+        } 
         return Page();
     }
 
@@ -111,6 +110,6 @@ public class PostReplyModel : PageModel
         thread.Posts = thread.Posts.Append(newPost).ToList();
         await _threadService.UpdateThread(thread);
 
-        return RedirectToPage($"/Thread", new { id = thread.Id });
+        return RedirectToPage($"/Thread/Thread", new { id = thread.Id });
     }
 }

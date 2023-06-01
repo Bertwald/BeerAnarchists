@@ -45,6 +45,21 @@ public class ForumPostService : IForumPost {
 
     }
 
+    public async Task AddReaction(int postId, Reaction reaction) {
+        _dbcontext.Reactions.Add(reaction);
+        var post = _dbcontext.ForumPosts.Find(postId);
+        if (post == null) {
+            return;
+        }
+        post.Reactions = post.Reactions.Append(reaction).ToList();
+        _dbcontext.Entry(post).State = EntityState.Modified;
+        try {
+            await _dbcontext.SaveChangesAsync();
+        } catch(DbUpdateConcurrencyException) {
+            throw;
+        }
+    }
+
     public async Task AddReply(int parentId, ForumPost reply) {
         if (_dbcontext.ForumPosts == null) {
             return;
@@ -93,6 +108,8 @@ public class ForumPostService : IForumPost {
             .Include(x => x.Author)
             .Include(x => x.Ancestor)
             .Include(x => x.Replies)
+            .Include(x => x.Reactions)
+            .ThenInclude(x => x.User)
             .FirstOrDefault();
     }
 
@@ -136,6 +153,6 @@ public class ForumPostService : IForumPost {
             .Include(x => x.Replies)
             .AsEnumerable();
 
-        return postHits.Concat(threadHits);
+        return postHits.Concat(threadHits).ToList();
     }
 }

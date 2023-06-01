@@ -1,0 +1,18 @@
+﻿@page
+@model BeerAnarchists.Pages.Post.NewPostModel
+@{
+  ViewData["Title"] = "New Post";
+}
+<div>
+  <form method="post" enctype="multipart/form-data">
+
+        <label asp-for="PostContent" class="form-label">Message</label>
+        <textarea asp-for="PostContent" class="form-control" cols="40" rows="5"></textarea>
+
+        <label asp-for="UploadedImage" class="form-label">Attach Image</label>
+        <input type="file" class="form-control" name="UploadedImage">
+        @Html.HiddenFor(m => m.ThreadId)
+        @Html.HiddenFor(m => m.PostAuthorId)
+        <input type="submit" class="btn btn-success" value="Add new post to thread">
+</form>
+</div>

@@ -1,5 +1,6 @@
 using Forum.Data;
 using Forum.Data.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -20,16 +21,18 @@ public class ThreadModel : PageModel
     //internal IEnumerable<ThreadModel> ForumThreads { get; set; } = Enumerable.Empty<ThreadModel>();
 
     private ForumDbContext _dbContext;
+    private readonly UserManager<ForumUser> _userManager;
     private readonly ISubforum _subforumService;
     private readonly IForumPost _postService;
     private readonly IForumThread _threadService;
 
-    public ThreadModel(ForumDbContext context, ISubforum subforumService, IForumPost postService, IForumThread threadService)
+    public ThreadModel(ForumDbContext context, ISubforum subforumService, IForumPost postService, IForumThread threadService, UserManager<ForumUser> userManager)
     {
         _dbContext = context;
         _subforumService = subforumService;
         _postService = postService;
         _threadService = threadService;
+        _userManager = userManager;
     }
 
     public async Task<IActionResult> OnGet(int id)
@@ -90,7 +93,30 @@ public class ThreadModel : PageModel
 
         return Page();
     }
+
+    // TODO : Implement reactions
+    public async Task<ActionResult> AddReaction(string userId, int postId, ReactionType reaction) {
+        //Check if there is already an reaction of this type from this user, we dont want multiple likes
+        var checkPost = _postService.GetForumPostById(postId);
+        var reactions = checkPost?.Reactions.ToList();
+        if(reactions?.Select(x => x.Type == reaction && x.User.Id == userId) is null) {
+            var newReaction = new Reaction() {
+                User = await _userManager.FindByIdAsync(userId),
+                Type = reaction,
+                Post = checkPost,
+            };
+            await _postService.AddReaction(postId, newReaction);
+        }
+        return Page();
+    }
+
+    public async Task<ActionResult> ReportPost(string userId, int postId) {
+
+        return Page();
+    }
 }
+
+
 
 
 /*

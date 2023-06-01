@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using System.Data;
 using System.Security.Claims;
 
@@ -28,6 +29,11 @@ public class TestController : ControllerBase {
         return await _context.Users.ToListAsync();
     }
 
+    public ActionResult AddReaction() {
+        int i;
+        i = 4;
+        return Redirect("/Index");
+    }
 
     /*
     // GET: api/Test

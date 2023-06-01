@@ -15,4 +15,5 @@ public interface IForumPost {
     public Task AddReply(int parentId, ForumPost reply);
     // string filepath?
     public Task AddImage(int postId, string url);
+    public Task AddReaction(int postId, Reaction reaction);
 }

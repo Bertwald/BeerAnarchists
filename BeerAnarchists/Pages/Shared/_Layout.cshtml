@@ -37,7 +37,7 @@
                                 <a class="nav-link" asp-area="" asp-page="/Message/Inbox" style="color:#f6d56d">Messages</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-page="/Group/Group" style="color:#f6d56d">Profile</a>
+                                <a class="nav-link" asp-area="" asp-page="/Profile/ManageUserProfile" asp-route-userId=@UserManager.GetUserId(User) style="color:#f6d56d">Profile</a>
                             </li>
                         }
                         <li class="nav-item">

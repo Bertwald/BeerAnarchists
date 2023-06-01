@@ -1,4 +1,49 @@
 ﻿@page
+@using Forum.Data.Models;
+@using Microsoft.AspNetCore.Identity;
+@inject UserManager<ForumUser> UserManager;
 @model BeerAnarchists.Pages.Profile.ManageUserProfileModel
 @{
+    ViewData["Title"] = "My Profile";
 }
+
+<div class="content">
+  <div class="d-flex justify-content-between" style="border: 1px solid gold; background-color:#4b0076; color:#f6d56d">
+  <div class="col-lg-*"><h4></h4></div>
+  <div class="col-lg-*"><h4>Member Profile</h4></div>
+  <div class="col-lg-*"><p style="vertical-align:bottom">Member Since:@Model.CurrentUserData.MemberSince</p></div>
+  </div>
+<div class="row">
+  <div style="max-width: 192px">
+  <img src="~/img/@Model.CurrentUserData.ImageUrl" alt="Image" width="192"/>
+  @if(Model.CurrentUserData.Alias is not null){
+      <p>@Model.CurrentUserData.Alias</p>
+    }else{
+      <p>@Model.CurrentUserData.UserName</p>
+      <p>You might want to add an alias</p>
+    }
+  </div>
+  <div class="row-cols-6">
+  <p>Statistics:</p>
+  <p>#Friends: @Model.CurrentUserData.NumberOfFriends</p>
+  <p>#Enemies: @Model.CurrentUserData.Ignored.Count()</p>
+  <p>#Posts: @Model.CurrentUserData.NumberOfPosts</p>
+  </div>
+</div>
+</div>
+<form method="post" enctype="multipart/form-data">
+
+        <label asp-for="CurrentUserData.Alias" class="form-label">Alias</label>
+        <textarea asp-for="CurrentUserData.Alias" class="form-control" cols="40" rows="1"></textarea>
+
+        <label asp-for="CurrentUserData.Description" class="form-label">Description</label>
+        <textarea asp-for="CurrentUserData.Description" class="form-control" cols="40" rows="2"></textarea>
+
+        <label asp-for="UserImage" class="form-label">Change Image</label>
+        <input type="file" class="form-control" name="UserImage">
+
+        @Html.HiddenFor(m => m.CurrentUserData.UserId)
+        @Html.HiddenFor(m => m.CurrentUserData.UserName)
+        @Html.HiddenFor(m => m.CurrentUserData.Ignored)
+        <input type="submit" class="btn btn-success" value="Update profile">
+</form>
