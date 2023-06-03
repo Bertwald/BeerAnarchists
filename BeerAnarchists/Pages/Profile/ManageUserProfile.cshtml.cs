@@ -86,6 +86,7 @@ public class ManageUserProfileModel : PageModel {
         public string MemberSince { get; set; }
         public int NumberOfPosts { get; set; }
         public int NumberOfFriends { get; set; }
+        public string LatestPost { get; set; }
         public IEnumerable<ForumUser> Ignored { get; set; }
     }
 }

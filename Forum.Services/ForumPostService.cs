@@ -1,28 +1,33 @@
 ﻿using Forum.Data;
 using Forum.Data.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Forum.Services;
 public class ForumPostService : IForumPost {
 
-    private ForumDbContext _dbcontext;
-    private IForumThread _threadService;
-    public ForumPostService(ForumDbContext dbcontext, IForumThread threadService) {
+    private readonly ForumDbContext _dbcontext;
+    public ForumPostService(ForumDbContext dbcontext) {
         _dbcontext = dbcontext;
-        _threadService = threadService;
     }
 
     public async Task Add(ForumPost post) {
         if (_dbcontext.ForumPosts == null) {
             return;
         }
-        _dbcontext.ForumPosts.Add(post);
-        await _dbcontext.SaveChangesAsync();
+        var poster = _dbcontext.Users.Find(post.Author.Id);
+        if (poster == null) {
+            return;
+        }
+        poster.Posts++;
+        poster.LastPost = DateTime.Now;
+        _dbcontext.Add(post);
+        _dbcontext.Entry(poster).State = EntityState.Modified;
+        try {
+            await _dbcontext.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException) {
+            throw;
+        }
     }
 
     public async Task AddImage(int postId, string url) {
@@ -55,7 +60,8 @@ public class ForumPostService : IForumPost {
         _dbcontext.Entry(post).State = EntityState.Modified;
         try {
             await _dbcontext.SaveChangesAsync();
-        } catch(DbUpdateConcurrencyException) {
+        }
+        catch (DbUpdateConcurrencyException) {
             throw;
         }
     }
@@ -68,9 +74,15 @@ public class ForumPostService : IForumPost {
         if (post == null) {
             return;
         }
-
+        var poster = _dbcontext.Users.Find(post.Author.Id);
+        if (poster == null) {
+            return;
+        }
+        poster.Posts++;
+        poster.LastPost = DateTime.Now;
         reply.Ancestor = post;
         post.Replies = post.Replies.Append(reply);
+        _dbcontext.Entry(poster).State = EntityState.Modified;
         _dbcontext.Entry(post).State = EntityState.Modified;
         _dbcontext.Entry(reply).State = EntityState.Modified;
 

@@ -10,18 +10,12 @@
     var user = await UserManager.GetUserAsync(User);
 }
 
-<script>
-  function AddReaction(userId, postId, Like){
-
-  }
-</script>
 @functions{
-
   async Task DisplayPostsAsTree(IEnumerable<Forum.Data.Models.ForumPost> posts, int alternation, string userID, int depth = 0) {
         @foreach (var post in posts)
         {
           //class="border-start border-secondary border-3"
-                <div style="padding-left:@(Math.Min(depth * 20, 120))px;">
+                <div style="padding-left:@(Math.Min(depth * 20, 120))px; margin-bottom:10px">
                     @{
                         await DisplayPost(post, alternation*2+depth%2, userID);
                       }
@@ -33,23 +27,45 @@
         }
     }
     async Task DisplayPost(Forum.Data.Models.ForumPost post, int colorIndex, string UserId) {
+      #region Constants
         //var Color = new string[]{ "#999999", "#6B6B6B", "#808080", "#5C5C5C" }[colorIndex];
         var Color = new string[]{ "#DDA0DD", "#C54B8C", "#D8BFD8", "#E0B0FF" }[colorIndex];
-        var bordercolor = (await UserManager.IsInRoleAsync(post.Author, "Admin")) ? "silver" : "black";
-        <div style="background-color:@Color; border: 1px solid @bordercolor; padding:5px; margin: 5px 0px 5px 0px; ">
+        var bordercolor = (await UserManager.IsInRoleAsync(post.Author, "Admin")) ? "gold" : "black";
+     #endregion
+
+     #region Post -->
+        <div style="background-color:@Color; border: 1px solid @bordercolor;">
+     <!-- #region Post Heading -->
       <div class="row" style="border-bottom: 1px solid black; margin:5px; padding:5px">
         <div class="col" style="text-align:left">
-          @post.Author @(post.Ancestor == null ? "wrote:" : "replied:")
+          @(post.Author.Alias ?? post.Author.UserName) @(post.Ancestor == null ? "wrote:" : "replied:")
         </div>
         <div class="col" style="text-align:right">
           #@post.Id
         </div>
       </div>
-      <div class="border border-dark rounded" style="background-color:floralwhite; padding:5px 15px 5px 15px">
+     <!-- #endregion -->
+     <!-- #region Post Body -->
+      <div class="row">
+      <div class="col-2" style="text-align:center" >
+      <a asp-page="/Profile/DisplayProfile" asp-route-viewerId=@Model.Id asp-route-userId=@post.Author.Id>
+      <img src="~/img/@post.Author.ImageUrl" style="width:96px; object-fit:contain; border: 1px solid black; margin-bottom:5px">
+      </a>
+                        <p style="margin-bottom:0px"> @(
+                                await UserManager.IsInRoleAsync(await UserManager.FindByIdAsync(post.Author.Id), "Admin") ? "Admin" : "User"
+                        )</p>
+                        <p style="margin-bottom:0px">Posts: @post.Author.Posts</p>
+                        <p style="margin-bottom:0px">Joined: @post.Author.MemberSince.ToShortDateString()</p>
+      </div>
+      <div class="col-9 border border-dark rounded" style="background-color:floralwhite; margin: 0 0 5px 0">
         @post.Content
       </div>
-      <div class="row">
-        <div class="col btn-group-sm">
+      </div>
+    <!--  #endregion -->
+    <!-- #region Post Footer, Button Area -->
+      <div class="row" style="margin-top:10px; margin-bottom:10px;">
+        <div class="col-2"></div>
+        <div class="col-5 btn-group-sm">
         <a class="btn btn-primary btn-sm" asp-page="/AddReaction" asp-route-userId=@UserId asp-route-postId=@post.Id asp-route-threadId=@Model.Id asp-route-type=@ReactionType.Like>
           Like 
           <span class="badge rounded-pill bg-light text-dark"> 
@@ -72,34 +88,37 @@
         Report!
         </a>
         </div>
-        <div class="col" style="text-align:right">
+        <div class="col-2" style="text-align:right">
                     @if (User.Claims.Any())
                     {
-                        <a class="btn btn-secondary btn-sm" asp-page="/Post/PostReply" asp-route-postId="@post.Id">Reply</a>
+                        <a class="btn btn-secondary btn-sm" asp-page="/Post/PostReply" asp-route-postId="@post.Id">Write a reply to post!</a>
                     }
         </div>
 
-        <div class="col" style="text-align:right">
+        <div class="col-3" style="text-align:right">
           @post.Created
         </div>
       </div>
+      <!-- #endregion -->
       </div>
+      #endregion
     }
 }
 
 <div>
-    <h3 class="display-4 text-center">Welcome to the Beer-Anarchists Forum</h3>
+    <h3 class="display-4 text-center">@Model.Title</h3>
+    <p style="text-align:center"> @Model.Description</p>
 
     @if (SignInManager.IsSignedIn(User))
     {
-        <span id="postBtn">
-            <a asp-page="/Post/NewPost" asp-route-threadId=@Model.Id asp-route-userId=@user?.Id class="btn-secondary">
-        Make a new Post!
-      </a>
-    </span>
+      <div class="row align-items-center">
+        <div class="col-5 btn-group-lg">
+          <a class="btn btn-secondary btn-lg" asp-page="/Post/NewPost" asp-route-userId=@user?.Id asp-route-threadId=@Model.Id>Write a new bottom level post!</a>
+        </div>
+      </div>
     }
 
-    <div class="text-left">
+    <div class="text-left" style="margin-top: 5px">
         @{
             int outerAlternation = 0;
         }
@@ -108,6 +127,4 @@
             outerAlternation = outerAlternation++ % 2;
         }
     </div>
-
-
 </div>
