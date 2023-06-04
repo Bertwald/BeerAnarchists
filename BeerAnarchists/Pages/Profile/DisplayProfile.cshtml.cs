@@ -30,7 +30,7 @@ public class DisplayProfileModel : PageModel
             return BadRequest();
         }
         ViewerId = viewerId;
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await _userService.GetUserAllInclusiceAsync(userId);
         CurrentUserData = new UserDataHolder {
             MemberSince = user.MemberSince.ToShortDateString(),
             UserId = userId,

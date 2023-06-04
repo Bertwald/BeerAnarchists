@@ -1,4 +1,23 @@
 ﻿@page
 @model BeerAnarchists.Pages.Message.PrivateMessageModel
 @{
+  ViewData["Title"] = "Composing Message";
 }
+
+<div class="row">
+  <h4>Write a private message</h4>
+  <p>(Privacy of messaging system is not guaranteed, please choose your subject and wording accordingly)</p>
+</div>
+
+<div class="row">
+   <form method="post" enctype="multipart/form-data">
+     @Html.HiddenFor(x => x.RecieverId)
+     @Html.HiddenFor(x => x.SenderId)
+     @Html.TextBox("MessageTitle", null, new {@class = "form-control"})
+     @Html.TextArea("Message", null, new {@class= "form-control"})
+     <button type="submit" class="btn btn-success btn-lg">
+       Send Message
+       <i class="bi bi-envelope"></i>
+     </button>
+    </form>
+</div>

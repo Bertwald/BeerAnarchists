@@ -41,7 +41,7 @@
       <form method="post" style="display:inline">
       <button class="btn btn-warning btn-lg" asp-page-handler="AddFriend" asp-route-userId=@Model.ViewerId asp-route-friendId=@Model.CurrentUserData.UserId >Add Friend</button>
       </form>
-      <a class="btn btn-primary btn-lg" asp-page="/Message/PrivateMessage" asp-route-senderId=@Model.ViewerId asp-route-recieverId=@Model.CurrentUserData.UserId >Send A PM!</a>
+      <a class="btn btn-primary btn-lg" asp-page="/Message/PrivateMessage" asp-route-senderId=@Model.ViewerId asp-route-recieverId=@Model.CurrentUserData.UserId >Message <i class="bi bi-envelope"></i></a>
       <form method="post" style="display:inline">
       <button class="btn btn-warning btn-lg" asp-page-handler="IgnoreUser" asp-route-userId=@Model.ViewerId asp-route-ignoredId=@Model.CurrentUserData.UserId >Ignore User</button>
       </form>

@@ -11,10 +11,12 @@ namespace BeerAnarchists.Pages.Profile;
 public class ManageUserProfileModel : PageModel {
     private readonly UserManager<ForumUser> _userManager;
     private readonly ForumDbContext _forumDbContext;
+    private readonly IUser _userService;
 
-    public ManageUserProfileModel(UserManager<ForumUser> userManager, ForumDbContext forumDbContext) {
+    public ManageUserProfileModel(IUser userService, UserManager<ForumUser> userManager, ForumDbContext forumDbContext) {
         _userManager = userManager;
         _forumDbContext = forumDbContext;
+        _userService = userService;
         //CurrentUserData = new UserDataHolder() {Ignored = new List<ForumUser>()};
     }
 
@@ -23,11 +25,7 @@ public class ManageUserProfileModel : PageModel {
     [BindProperty]
     public IFormFile? UserImage { get; set; }
     public async Task<ActionResult> OnGet(string userId) {
-        var user = await _forumDbContext.Users
-            .Where(user => user.Id == userId)
-            .Include(user => user.Friends)
-            .Include(user => user.Ignored)
-            .FirstAsync();
+        var user = await _userService.GetUserAllInclusiceAsync(userId);
         CurrentUserData = new UserDataHolder {
             MemberSince = user.MemberSince.ToShortDateString(),
             UserId = userId,

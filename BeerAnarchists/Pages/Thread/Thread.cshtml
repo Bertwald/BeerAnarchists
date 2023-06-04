@@ -57,6 +57,9 @@
                         )</p>
                         <p style="margin-bottom:0px">Posts: @post.Author.Posts</p>
                         <p style="margin-bottom:0px">Joined: @post.Author.MemberSince.ToShortDateString()</p>
+                        <a asp-page="/Message/PrivateMessage" asp-route-senderId=@viewer?.Id asp-route-recieverId=@post.Author.Id>
+                        <i class="bi bi-envelope"></i>
+                        </a>
       </div>
       <div class="col-9 border border-dark rounded" style="background-color:floralwhite; margin: 0 0 5px 0">
         @post.Content
@@ -68,25 +71,25 @@
         <div class="col-2"></div>
         <div class="col-5 btn-group-sm">
         <a class="btn btn-primary btn-sm" asp-page="/AddReaction" asp-route-userId=@UserId asp-route-postId=@post.Id asp-route-threadId=@Model.Id asp-route-type=@ReactionType.Like>
-          Like 
+          <i class="bi bi-hand-thumbs-up-fill"></i>
           <span class="badge rounded-pill bg-light text-dark"> 
             @post.Reactions.Where(x => x.Type == Forum.Data.Models.ReactionType.Like).Count()
           </span>
         </a>
         <a class="btn btn-primary btn-sm" asp-page="/AddReaction" asp-route-userId=@UserId asp-route-postId=@post.Id asp-route-threadId=@Model.Id asp-route-type=@ReactionType.Dislike>
-          Dislike 
+          <i class="bi bi-hand-thumbs-down-fill"></i>
           <span class="badge rounded-pill bg-light text-dark"> 
             @post.Reactions.Where(x => x.Type == Forum.Data.Models.ReactionType.Dislike).Count()
            </span>
         </a>
         <a class="btn btn-primary btn-sm" asp-page="/AddReaction" asp-route-userId=@UserId asp-route-postId=@post.Id asp-route-threadId=@Model.Id asp-route-type=@ReactionType.Heart>
-          Heart 
+          <i class="bi bi-heart-fill"></i>
           <span class="badge rounded-pill bg-light text-dark"> 
             @post.Reactions.Where(x => x.Type == Forum.Data.Models.ReactionType.Heart).Count()
           </span>
         </a>
         <a class="btn btn-danger btn-sm" asp-page="/PostReport">
-        Report!
+          <i class="bi bi-flag"></i> Report
         </a>
         </div>
         <div class="col-2" style="text-align:right">

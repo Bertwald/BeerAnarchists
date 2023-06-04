@@ -1,4 +1,40 @@
 ﻿@page
 @model BeerAnarchists.Pages.Message.InboxModel
 @{
+  ViewData["Title"] = "My inbox";
+}
+
+@if (!Model.Inbox.Any()) {
+    <p>It Seems that you have not recieved any private messages!</p>
+} else {
+    foreach(var message in Model.Inbox) {
+        <div class="row">
+          <div class="card m-2" style="width: 48rem; border: 1px solid rgba(0,0,0,0.7)">
+            <div class="card-header">
+              <div class ="row align-content-lg-stretch">
+              <div class="col-6">
+                <span class="card-text">From: @(message.Sender.Alias ?? message.Sender.UserName)</span>
+              </div>
+              <div class="col-6">
+                <span class="card-text">Date: @message.Created.ToLongDateString()</span>
+              </div>
+              </div>
+              <div class="row">
+                <p class="card-text">Subject: @message.Title</p>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="card-text">The message reads:</p>
+              <p class="card-text" style="border: 1px solid darkgrey; background-color:floralwhite">@message.Content</p>
+            </div>
+            <div class="card-footer">
+              <a class="btn btn-primary btn-sm" asp-page="./PrivateMessage" asp-route-senderId=@message.Reciever.Id asp-route-recieverId=@message.Sender.Id>
+                  Message Back <i class="bi bi-envelope"></i>
+              </a>
+
+            </div>
+          </div>
+        </div>
+    }
+
 }

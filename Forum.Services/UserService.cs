@@ -28,7 +28,7 @@ public sealed class UserService : IUser {
 
         try {
             await _db.SaveChangesAsync();
-        } catch (Exception ex) {
+        } catch (Exception) {
             throw;
         }
         return true;
@@ -49,7 +49,7 @@ public sealed class UserService : IUser {
         try {
             await _db.SaveChangesAsync();
         }
-        catch (Exception ex) {
+        catch (Exception) {
             throw;
         }
         return true;
@@ -61,5 +61,32 @@ public sealed class UserService : IUser {
         }
         var messages = _db.PrivateMessages.Where(message => message.Reciever.Id == userId);
         return messages.Include(x => x.Sender).Include(x => x.Reciever).AsEnumerable();
+    }
+
+    public async Task<bool> IsValidUser(string userId) {
+        return (await _db.Users.FindAsync(userId)) != null;
+    }
+
+    public async Task SendMessageAsync(PrivateMessage message) {
+        if(message == null) {
+            return;
+        }
+        _db.Messages.Add(message);
+        try {
+            await _db.SaveChangesAsync();
+        } catch (Exception) {
+            throw;
+        }
+    }
+
+    public async Task<ForumUser?> GetUserAllInclusiceAsync(string userId) {
+        if(userId == null) {
+            return null;
+        }
+        return await _db.Users
+            .Where(user => user.Id == userId)
+            .Include(user => user.Friends)
+            .Include(user => user.Ignored)
+            .FirstAsync();
     }
 }
