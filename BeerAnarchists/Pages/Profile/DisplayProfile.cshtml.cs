@@ -11,11 +11,13 @@ namespace BeerAnarchists.Pages.Profile;
 public class DisplayProfileModel : PageModel
 {
     private readonly UserManager<ForumUser> _userManager;
+    private readonly IUser _userService;
     private readonly ForumDbContext _forumDbContext;
 
-    public DisplayProfileModel(UserManager<ForumUser> userManager, ForumDbContext forumDbContext) {
+    public DisplayProfileModel(UserManager<ForumUser> userManager, ForumDbContext forumDbContext, IUser userService) {
         _userManager = userManager;
         _forumDbContext = forumDbContext;
+        _userService = userService;
     }
 
     [BindProperty]
@@ -24,6 +26,9 @@ public class DisplayProfileModel : PageModel
     public string ViewerId { get; set; }
 
     public async Task<ActionResult> OnGet(string userId, string viewerId) {
+        if(userId is null || viewerId is null) {
+            return BadRequest();
+        }
         ViewerId = viewerId;
         var user = await _userManager.FindByIdAsync(userId);
         CurrentUserData = new UserDataHolder {
@@ -39,6 +44,16 @@ public class DisplayProfileModel : PageModel
             LatestPost = user.LastPost?.ToShortDateString(),
         };
         return Page();
+    }
+
+    public async Task<ActionResult> OnPostIgnoreUserAsync(string userId, string ignoredId) {
+        _ = await _userService.AddIgnoredAsync(userId, ignoredId);
+        return RedirectToPage( "./DisplayProfile", new { userId = ignoredId, viewerId = userId});
+    }
+
+    public async Task<ActionResult> OnPostAddFriendAsync(string userId, string friendId) {
+        _ = await _userService.AddFriendAsync(userId, friendId);
+        return RedirectToPage("./DisplayProfile", new { userId = friendId, viewerId = userId });
     }
 
 }

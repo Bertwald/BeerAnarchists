@@ -27,11 +27,12 @@
         }
     }
     async Task DisplayPost(Forum.Data.Models.ForumPost post, int colorIndex, string UserId) {
-      #region Constants
+        #region Constants
         //var Color = new string[]{ "#999999", "#6B6B6B", "#808080", "#5C5C5C" }[colorIndex];
         var Color = new string[]{ "#DDA0DD", "#C54B8C", "#D8BFD8", "#E0B0FF" }[colorIndex];
         var bordercolor = (await UserManager.IsInRoleAsync(post.Author, "Admin")) ? "gold" : "black";
-     #endregion
+        var viewer = await UserManager.GetUserAsync(User);
+        #endregion
 
      #region Post -->
         <div style="background-color:@Color; border: 1px solid @bordercolor;">
@@ -48,7 +49,7 @@
      <!-- #region Post Body -->
       <div class="row">
       <div class="col-2" style="text-align:center" >
-      <a asp-page="/Profile/DisplayProfile" asp-route-viewerId=@Model.Id asp-route-userId=@post.Author.Id>
+      <a asp-page="/Profile/DisplayProfile" asp-route-viewerId=@viewer?.Id asp-route-userId=@post.Author.Id>
       <img src="~/img/@post.Author.ImageUrl" style="width:96px; object-fit:contain; border: 1px solid black; margin-bottom:5px">
       </a>
                         <p style="margin-bottom:0px"> @(
@@ -123,7 +124,7 @@
             int outerAlternation = 0;
         }
         @if(Model.Posts != null){
-            await DisplayPostsAsTree(Model.Posts.Where(x => x.Ancestor is null), outerAlternation, user.Id ,0);
+            await DisplayPostsAsTree(Model.Posts.Where(x => x.Ancestor is null), outerAlternation, user?.Id ,0);
             outerAlternation = outerAlternation++ % 2;
         }
     </div>

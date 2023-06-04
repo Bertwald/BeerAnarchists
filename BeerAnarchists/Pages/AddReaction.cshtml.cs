@@ -26,7 +26,7 @@ public class AddReactionModel : PageModel {
         var reactions = checkPost?.Reactions.ToList();
         //Check if there is already an reaction of this type from this user, we dont want multiple likes
         //Also check that [preferred pronoun] can not like [preferred pronoun]s own posts 
-        var forbidden = reactions?.Select(x => x.Type == reaction && x.User.Id == userId && x.Post.Author.Id == userId).ToList();
+        var forbidden = reactions?.Where(x => x.Type == reaction && x.User.Id == userId && x.Post.Author.Id == userId).ToList();
         if (forbidden?.Count < 1 && checkPost?.Author.Id != userId) {
             var newReaction = new Reaction() {
                 User = await _userManager.FindByIdAsync(userId),

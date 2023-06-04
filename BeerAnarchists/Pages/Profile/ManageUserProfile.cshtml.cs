@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata;
 
 namespace BeerAnarchists.Pages.Profile;
 [Authorize]
@@ -24,7 +23,11 @@ public class ManageUserProfileModel : PageModel {
     [BindProperty]
     public IFormFile? UserImage { get; set; }
     public async Task<ActionResult> OnGet(string userId) {
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await _forumDbContext.Users
+            .Where(user => user.Id == userId)
+            .Include(user => user.Friends)
+            .Include(user => user.Ignored)
+            .FirstAsync();
         CurrentUserData = new UserDataHolder {
             MemberSince = user.MemberSince.ToShortDateString(),
             UserId = userId,
@@ -35,6 +38,7 @@ public class ManageUserProfileModel : PageModel {
             NumberOfPosts = user.Posts,
             NumberOfFriends = user.Friends.Count(),
             Ignored = user.Ignored,
+            LatestPost = user.LastPost?.ToLongDateString(),
         };
         return Page();
     }
@@ -65,14 +69,14 @@ public class ManageUserProfileModel : PageModel {
             savedUser.Alias = CurrentUserData.Alias;
             savedUser.ImageUrl = CurrentUserData.ImageUrl;
             savedUser.Description = CurrentUserData.Description;
-        }
-        _forumDbContext.Entry(savedUser).State = EntityState.Modified;
+            _forumDbContext.Entry(savedUser).State = EntityState.Modified;
 
-        try {
-            await _forumDbContext.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException) {
-            throw;
+            try {
+                await _forumDbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException) {
+                throw;
+            }
         }
         return Page();//RedirectToPage($"/Profile/Profile", new { userId = CurrentUserData.UserId });
     }
@@ -83,10 +87,10 @@ public class ManageUserProfileModel : PageModel {
         public string? Alias { get; set; }
         public string? ImageUrl { get; set; }
         public string? Description { get; set; }
-        public string MemberSince { get; set; }
+        public string? MemberSince { get; set; }
         public int NumberOfPosts { get; set; }
         public int NumberOfFriends { get; set; }
-        public string LatestPost { get; set; }
+        public string? LatestPost { get; set; }
         public IEnumerable<ForumUser> Ignored { get; set; }
     }
 }

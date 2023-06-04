@@ -31,10 +31,10 @@
                         @*Only For logged in users*@
                         @if(SignInManager.IsSignedIn(User)) {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-page="/Group/Group" style="color:#f6d56d">Groups</a>
+                                <a class="nav-link" asp-area="" asp-page="/Group/Group" asp-route-userId=@UserManager.GetUserId(User) style="color:#f6d56d">Groups</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-page="/Message/Inbox" style="color:#f6d56d">Messages</a>
+                                <a class="nav-link" asp-area="" asp-page="/Message/Inbox" asp-route-userId=@UserManager.GetUserId(User) style="color:#f6d56d">Messages</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-page="/Profile/ManageUserProfile" asp-route-userId=@UserManager.GetUserId(User) style="color:#f6d56d">Profile</a>

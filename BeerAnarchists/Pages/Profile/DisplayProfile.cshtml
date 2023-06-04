@@ -37,10 +37,14 @@
   </div>
 </div>
   <div class="row justify-content-center">
-    <div class="col-5 btn-group-lg">
-      <a class="btn btn-primary btn-lg" asp-page="/Index" asp-route-userId="a" >Add Friend</a>
-      <a class="btn btn-primary btn-lg" asp-page="/Index" asp-route-userId="b" >Send A PM!</a>
-      <a class="btn btn-warning btn-lg" asp-page="/Index" asp-route-userId="c" >Ignore User</a>
+    <div class="col-5 input-group-lg">
+      <form method="post" style="display:inline">
+      <button class="btn btn-warning btn-lg" asp-page-handler="AddFriend" asp-route-userId=@Model.ViewerId asp-route-friendId=@Model.CurrentUserData.UserId >Add Friend</button>
+      </form>
+      <a class="btn btn-primary btn-lg" asp-page="/Message/PrivateMessage" asp-route-senderId=@Model.ViewerId asp-route-recieverId=@Model.CurrentUserData.UserId >Send A PM!</a>
+      <form method="post" style="display:inline">
+      <button class="btn btn-warning btn-lg" asp-page-handler="IgnoreUser" asp-route-userId=@Model.ViewerId asp-route-ignoredId=@Model.CurrentUserData.UserId >Ignore User</button>
+      </form>
     </div>
   </div>
 </div>

@@ -39,6 +39,7 @@ public class ForumDbContext : IdentityDbContext<ForumUser> {
     public DbSet<ForumUser> ForumUsers { get; set; }
     public DbSet<Group> Groups { get; set; }
     public DbSet<Message> Messages { get; set; }
+    public DbSet<PrivateMessage> PrivateMessages { get; set; }
     public DbSet<ForumPost> ForumPosts { get; set; }
     public DbSet<PostReport> PostReports { get; set; }
     public DbSet<ForumThread> ForumThreads { get; set; }
