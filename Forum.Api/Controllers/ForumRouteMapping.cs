@@ -11,6 +11,9 @@ public abstract class ForumRouteMapping : ControllerBase, IForumAPI {
     [ActionName("Posts")]
     public abstract Task<ActionResult<IEnumerable<ForumPost>>> GetForumPosts();
     [HttpGet]
+    [ActionName("PostsBrief")]
+    public abstract Task<IEnumerable<object>> GetPostsBrief();
+    [HttpGet]
     [ActionName("TotalPosts")]
     public abstract Task<ActionResult<int>> GetNumberOfPosts();
     [HttpGet("{id}")]

@@ -17,6 +17,7 @@ public interface IForumAPI {
     public Task<ActionResult<int>> GetNumberOfPosts();
     public Task<ActionResult<int>> GetNumberOfPostsBySubforum(int id);
     public Task<ActionResult<IEnumerable<ForumPost>>> GetForumPosts();
+    public Task<IEnumerable<object>> GetPostsBrief();
     #endregion
     #region POST
     public Task<ActionResult<ForumThread>> PostThread(ForumThread thread);

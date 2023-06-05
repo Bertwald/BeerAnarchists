@@ -29,6 +29,18 @@ public class ForumController : ForumRouteMapping {
         return user;
     }
 
+    public override Task<IEnumerable<object>> GetPostsBrief() {
+        var tcs = new TaskCompletionSource<IEnumerable<object>>();
+        tcs.SetResult(_context.ForumPosts
+            .Select(x => new {
+                author = (x.Author.Alias ?? x.Author.UserName),
+                content = x.Content,
+                date = x.Created.ToLongDateString()
+            })
+            .ToList());
+        return tcs.Task;
+    }
+
     public async override Task<ActionResult<ForumUser>> GetUserByMail(string mail) {
         if (_context.Users is null) {
             return NotFound();
@@ -80,7 +92,7 @@ public class ForumController : ForumRouteMapping {
         if (_context.ForumPosts is null) {
             return NotFound();
         }
-        return await _context.ForumPosts.ToListAsync();
+        return await _context.ForumPosts.Include(x => x.Author).ToListAsync();
     }
 
     public async override Task<ActionResult<IEnumerable<ForumUser>>> GetTopPosters() {
@@ -123,6 +135,8 @@ public class ForumController : ForumRouteMapping {
                 .Select(thread => thread.Posts))
             .CountAsync();
     }
+
+
     #endregion
     #region POST
     public async override Task<ActionResult<ForumThread>> PostThread([FromBody] ForumThread thread) {
