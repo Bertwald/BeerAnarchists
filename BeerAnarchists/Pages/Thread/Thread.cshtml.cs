@@ -37,7 +37,8 @@ public class ThreadModel : PageModel
 
     public async Task<IActionResult> OnGet(int id)
     {
-        if (id == null)
+        // value 0 ids can be reserved for checks like these
+        if (id == default)
         {
             return NotFound();
         }
@@ -52,49 +53,15 @@ public class ThreadModel : PageModel
             Title = threadData.Name;
             Description = threadData.Description;
 
-            var post = Posts
+            var lastPost = Posts
                 .OrderByDescending(p => p.Created)
                 .FirstOrDefault();
-            LastPoster = post?.Author.Alias ?? post?.Author.UserName ?? "Unknown";
-            LastPost = post?.Created ?? default;
+            LastPoster = lastPost?.Author.Alias ?? lastPost?.Author.UserName ?? "Unknown";
+            LastPost = lastPost?.Created ?? default;
         }
-
-        //var forum =_subforumService.GetById(id);
-
-        //if(forum == null) {
-        //    return NotFound();
-        //}
-
-        //SubForum = new SubForumModel() {Id = forum?.Id ?? -1, Author = forum?.Author, Description=forum?.Description, ImageUrl = forum?.ImageUrl, Title = forum?.Title };
-
-        //ForumThreads = _dbContext.Subfora
-        //    .Include(x => x.ForumThreads).ThenInclude(t => t.Posts)
-        //    .Where(x => x.Id == id)
-        //    .SelectMany(x => x.ForumThreads)
-        //    .AsEnumerable()
-        //    .Select(x => new ThreadModel() {
-        //     Description = x.Description,
-        //     Id = x.Id,
-        //     Title = x.Name,
-        //     Posts = x.Posts,
-        //     PostCount = x.Posts.Count(),
-        // }).ToList();
-
-        //foreach (var fthread in ForumThreads) {
-        //    var post = _dbContext.ForumThreads
-        //        .Where(thread => thread.Id == fthread.Id)
-        //        .Include(thread => thread.Posts).ThenInclude(p => p.Author)
-        //        .SelectMany(thread => thread.Posts)
-        //        .OrderByDescending(p => p.Created)
-        //        .FirstOrDefault();
-        //    fthread.LastPoster = post?.Author.Alias ?? post?.Author.UserName ?? "Unknown";
-        //    fthread.LastPost = post?.Created ?? default;
-        //}
-
         return Page();
     }
 
-    // TODO : Implement reactions
     public async Task<ActionResult> AddReaction(string userId, int postId, ReactionType reaction) {
         //Check if there is already an reaction of this type from this user, we dont want multiple likes
         var checkPost = _postService.GetForumPostById(postId);

@@ -1,0 +1,25 @@
+﻿@page
+@model BeerAnarchists.Pages.Post.PostReportModel
+@{
+  ViewData["Title"] = "Report Post";
+}
+<div class="container">
+  <div class="row">
+    <h4>Write and submit the reason for reporting this post</h4>
+    <p>Report abuse is against the rules and will be punished</p>
+  </div>
+
+  <div class="row">
+    <form method="post" enctype="multipart/form-data">
+      @Html.HiddenFor(x => x.ReportedId)
+      @Html.HiddenFor(x => x.ReporterId)
+      @Html.HiddenFor(x => x.PostId)
+      @Html.TextArea("ReportMessage", null, new {@class= "form-control"})
+     <button type="submit" class="btn btn-warning btn-lg">
+       PostReport
+       <i class="bi bi-flag"></i>
+     </button>
+    </form>
+  </div>
+  
+</div>

@@ -24,8 +24,4 @@
     <ProjectReference Include="..\Forum.Services\Forum.Services.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\img\avatars\" />
-  </ItemGroup>
-
 </Project>

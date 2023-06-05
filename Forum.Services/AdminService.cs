@@ -15,7 +15,7 @@ public sealed class AdminService {
     }
 
     public IEnumerable<PostReport> GetReportedPosts(ReportStatus? status = null) {
-        
+
         if (_context.PostReports == null) {
             return Enumerable.Empty<PostReport>();
         }
@@ -25,7 +25,7 @@ public sealed class AdminService {
             .Include(x => x.Reporter)
             .Include(x => x.Reported)
             // TODO: Debug to ensure == is correct
-            .Where(x => status == null || x.Status==status)
+            .Where(x => status == null || x.Status == status)
             .OrderBy(x => x.Reported.Id)
             .ThenBy(x => x.Status)
             .AsEnumerable();
@@ -36,20 +36,37 @@ public sealed class AdminService {
     public async Task<bool> SetReportStatus(PostReport report, ReportStatus status) {
         if (report == null || report.Status == status) {
             return false;
-        } else {
-            report.Status = status;
-            _context.Entry(report).State = EntityState.Modified;
-            try {
-                await _context.SaveChangesAsync();
+        }
+            //Special troll treatment
+        if (status == ReportStatus.Trollstatus) {
+            var culprit = report.Reported;
+            if (culprit != null) {
+                culprit.ImageUrl = "avatars/chicken.jpg";
+                culprit.Alias = "Captain McNugget";
+                culprit.LockoutEnabled = true;
+                culprit.LockoutEnd = DateTime.Now.AddDays(2);
+                _context.Entry(culprit).State = EntityState.Modified;
             }
-            catch (DbUpdateConcurrencyException) {
-                return false;
-            }
+        }
+
+        report.Status = status;
+        _context.Entry(report).State = EntityState.Modified;
+        try {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException) {
+            return false;
         }
         return default;
     }
 
-    
-
+    public async Task<PostReport> GetPostReportById(int id) {
+        return await _context.PostReports
+            .Where(report => report.Id == id)
+            .Include(x => x.Reported)
+            .Include(x => x.Reporter)
+            .Include(x => x.ReportedPost)
+            .FirstOrDefaultAsync();
+    }
 
 }
