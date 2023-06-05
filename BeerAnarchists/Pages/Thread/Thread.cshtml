@@ -88,14 +88,14 @@
             @post.Reactions.Where(x => x.Type == Forum.Data.Models.ReactionType.Heart).Count()
           </span>
         </a>
-        <a class="btn btn-danger btn-sm" asp-page="/PostReport">
+        <a class="btn btn-danger btn-sm" asp-page="/Post/PostReport" asp-route-reporterId=@UserId asp-route-postId=@post.Id asp-route-reportedId=@post.Author.Id>
           <i class="bi bi-flag"></i> Report
         </a>
         </div>
         <div class="col-2" style="text-align:right">
                     @if (User.Claims.Any())
                     {
-                        <a class="btn btn-secondary btn-sm" asp-page="/Post/PostReply" asp-route-postId="@post.Id">Write a reply to post!</a>
+                        <a class="btn btn-secondary btn-sm" asp-page="/Post/PostReply" asp-route-postId="@post.Id">Reply to post!</a>
                     }
         </div>
 

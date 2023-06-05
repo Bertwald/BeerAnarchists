@@ -13,7 +13,7 @@ public interface IForumPost {
     public Task Add(ForumPost post);
     public Task Delete(int id);
     public Task AddReply(int parentId, ForumPost reply);
-    // string filepath?
+    public Task AddReport(PostReport report);
     public Task AddImage(int postId, string url);
     public Task AddReaction(int postId, Reaction reaction);
 }

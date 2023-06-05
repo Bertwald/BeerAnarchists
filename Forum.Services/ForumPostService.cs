@@ -94,6 +94,21 @@ public class ForumPostService : IForumPost {
         }
     }
 
+    public async Task AddReport(PostReport report) {
+        if (report == null) {
+            return;
+        }
+        if (_dbcontext.PostReports.Contains(report)) {
+            return;
+        }
+        _dbcontext.PostReports.Add(report);
+        try {
+            await _dbcontext.SaveChangesAsync();
+        } catch (DbUpdateConcurrencyException) {
+            throw;
+        }
+    }
+
     public async Task Delete(int id) {
         if (_dbcontext.ForumPosts == null) {
             return;

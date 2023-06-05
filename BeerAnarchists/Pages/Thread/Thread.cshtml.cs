@@ -109,11 +109,6 @@ public class ThreadModel : PageModel
         }
         return Page();
     }
-
-    public async Task<ActionResult> ReportPost(string userId, int postId) {
-
-        return Page();
-    }
 }
 
 
