@@ -1,6 +1,5 @@
 ﻿using Forum.Data;
 using Forum.Data.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

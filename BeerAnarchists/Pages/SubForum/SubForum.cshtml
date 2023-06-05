@@ -15,12 +15,20 @@
     </p>
     @if (SignInManager.IsSignedIn(User))
     {
-        <span id="postBtn">
-            <a asp-page="/Thread/NewThread" asp-route-subForumId="@Model.Id" asp-route-userId=@user?.Id class="btn-secondary">
-        Create new Thread
-      </a>
-    </span>
+      <div class="row justify-content-center">
+      <div class="col-3 align-content-center">
+        <a asp-page="/Thread/NewThread" 
+         asp-route-subForumId="@Model.Id" 
+         asp-route-userId=@user?.Id
+         class="btn-secondary btn-lg" 
+         style="background-color:#4b0076; color:#f6d56d">
+          [ADMIN] Create new Subforum
+        </a>
+      </div>
+    </div>
+
     }
+
     <table class="table table striped table-dark table-hover" id="indexTable">
         @foreach (var thread in Model.ForumThreads) {
             <tr>

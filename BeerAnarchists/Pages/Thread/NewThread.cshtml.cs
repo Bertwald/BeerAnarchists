@@ -1,4 +1,4 @@
-using Forum.Data;
+using Forum.Data.Interfaces;
 using Forum.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

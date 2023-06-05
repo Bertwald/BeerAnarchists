@@ -1,10 +1,9 @@
-using Forum.Data;
+using Forum.Data.Interfaces;
 using Forum.Data.Models;
 using Forum.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Data;
 
 namespace BeerAnarchists.Pages.Admin;
 

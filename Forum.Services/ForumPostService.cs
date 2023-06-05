@@ -1,4 +1,5 @@
 ﻿using Forum.Data;
+using Forum.Data.Interfaces;
 using Forum.Data.Models;
 using Microsoft.EntityFrameworkCore;
 

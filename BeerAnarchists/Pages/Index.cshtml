@@ -10,11 +10,16 @@
 }
 
 @if(SignInManager.IsSignedIn(User) && User.IsInRole("Admin")) {
-    <span id="postBtn">
-            <a asp-page="/SubForum/NewSubforum" asp-route-userId=@user?.Id class="btn-secondary btn-lg" style="background-color:#4b0076; color:gold">
-        [ADMIN] Create new Subforum
-      </a>
-    </span>
+    <div class="row justify-content-center">
+      <div class="col-3 align-content-center">
+        <a asp-page="/SubForum/NewSubforum" 
+         asp-route-userId=@user?.Id 
+         class="btn-secondary btn-lg" 
+         style="background-color:#4b0076; color:#f6d56d">
+          [ADMIN] Create new Subforum
+        </a>
+      </div>
+    </div>
 }
 <div class="text-center">
     <h1 class="display-4">Welcome to the Beer-Anarchists Forum</h1>

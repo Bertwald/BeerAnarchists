@@ -1,10 +1,11 @@
-using Forum.Data.Models;
 using Forum.Data;
+using Forum.Data.Interfaces;
+using Forum.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using static BeerAnarchists.Pages.Profile.ManageUserProfileModel;
-using Microsoft.AspNetCore.Authorization;
 
 namespace BeerAnarchists.Pages.Profile;
 [Authorize]

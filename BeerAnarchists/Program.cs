@@ -4,6 +4,7 @@ using Forum.Data;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 using Forum.Data.Models;
+using Forum.Data.Interfaces;
 
 namespace BeerAnarchists;
 
