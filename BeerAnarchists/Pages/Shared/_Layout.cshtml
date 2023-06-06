@@ -53,7 +53,10 @@
                         @*Only For Admin*@
                         @if(SignInManager.IsSignedIn(User) && User.IsInRole("Admin")){
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/Admin/Index" style="color:#f6d56d">Admin</a>
+                            <a class="nav-link" asp-area="" asp-page="/Admin/Index" style="color:#f6d56d">Admin Users</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-page="/Admin/ReportedPosts" style="color:#f6d56d">Reported Posts</a>
                         </li>
                         }
                         @*Only For logged in users*@

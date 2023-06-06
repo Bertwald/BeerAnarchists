@@ -4,36 +4,70 @@
 @{
   ViewData["Title"] = "Reply";
 }
-
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-3">
+      <h3 style="text-align:center">
+        Original Post:
+      </h3>
+    </div>
+  </div>
 <div class="row">
-
-
-  <div class="card m-2" style="width: 18rem">
-                <div class="card-header">
-                  <p>Skunk är dumt</p>
-                  <p>Det luktar illa här inne</p>  
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">@Model.PostContent</h5>
-                    <p class="card-text">@Model.PostImageUrl</p>
-                </div>
-                <div class="card-footer text-muted">
-                    <p>@Model.AgeString ago</p>
-                </div>
-
-            </div>
+     <div class="card m-2">
+       <div class="card-header">
+         <div class="row justify-content-between">
+           <div class="col-4">
+             <p>Written By @Model.PostAuthor<p/>
+           </div>
+           <div class="col-1">
+             <p style="text-align:right">#@Model.PostId</p>
+           </div>
+         </div>
+       </div>
+       <div class="card-body">
+         <h5 class="card-title">@Model.PostContent</h5>
+          <p class="card-text">@Model.PostImageUrl</p>
+       </div>
+       <div class="card-footer text-muted">
+         <div class="row justify-content-between">
+           <div class="col-2">
+             <p style="text-align:left">
+               @Model.PostDate
+             </p>
+           </div>
+           <div class="col-2">
+             <p style="text-align:right">
+               @Model.AgeString ago
+             </p>
+           </div>
+         </div>
+       </div>
+       </div>
 </div>
-
+<div class="row justify-content-center">
+    <div class="col-3">
+      <h3 style="text-align:center">
+        Your Reply:
+      </h3>
+    </div>
+  </div>
 <div>
   <form method="post" enctype="multipart/form-data">
-
-        <label asp-for="ReplyContent" class="form-label">Reply</label>
+    <div class="row">
+        <label asp-for="ReplyContent" class="form-label">Reply Message</label>
         <textarea asp-for="ReplyContent" class="form-control" cols="40" rows="5"></textarea>
-
-        <label asp-for="UploadedImage" class="form-label">Attach Image</label>
+    </div>
+    <dic class="row">
+        <label asp-for="UploadedImage" class="form-label">Attach Image [Pics or it didnt happen!]</label>
         <input type="file" class="form-control" name="UploadedImage">
         @Html.HiddenFor(m => m.PostId)
         @Html.HiddenFor(m => m.ReplyAuthorId)
-        <input type="submit" class="btn btn-success" value="Add new reply to thread">
+    </dic>
+    <div class="row justify-content-center">
+      <div class="col-1">
+        <input type="submit" class="btn btn-success" value="Post Reply">
+      </div>
+    </div>
 </form>
+</div>
 </div>

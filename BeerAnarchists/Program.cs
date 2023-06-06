@@ -27,7 +27,6 @@ public class Program {
         #region Register Services
         builder.Services.AddScoped<Forum.Services.JwtTokenService>();
         builder.Services.AddScoped<Forum.Services.AdminService>();
-        builder.Services.AddScoped<Controllers.TestController>();
         builder.Services.AddScoped<Forum.Data.ForumDbContext>();
         builder.Services.AddScoped<ISubforum, Forum.Services.SubforumService>();
         builder.Services.AddScoped<IForumThread, Forum.Services.ForumThreadsService>();

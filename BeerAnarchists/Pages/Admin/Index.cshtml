@@ -1,39 +1,38 @@
 ﻿@page
 @model BeerAnarchists.Pages.RoleAdmin.IndexModel
 @{
+  ViewData["Title"] = "Admin: Users";
 }
 
-<h1>Roll-Admin</h1>
+<div class="container">
+<h1 style="text-align:center">User Roles</h1>
 
-<div>
-    <h3>Befintliga roller</h3>
-    @foreach (var role in Model.URoles)
+<div class="row justify-content-center">
+  <div class="col-4 justify-content-center" style="text-align:center">
+    <h3>Roles currently in use</h3>
+            @{
+                int counter = 1;
+            }
+    @foreach (var role in Model.UserRoles)
     {
-        <p>@role.Name</p>
+        <p>@(counter++) : @role.Name</p>
     }
+  </div>
+</div>
+<div class="row">
+  <p>The roles which are implemented in code are <b>Admin</b> and <b>User</b></p>
+  <p>Contact devs is you desire other functionality, e.g. Moderator</p>
 </div>
 
-
 <div>
-    @if (Model.IsAdmin)
-    {
-        <p class="alert alert-danger">Det här får bara admin se!</p>
-    }
-    @if (Model.IsUser)
-    {
-        <p class="alert alert-success">Det här får bara användare se!</p>
-    }
-</div>
-
-
-<div>
-    <h3>Befintliga användare: </h3>
+    <h3>Table of current Users: </h3>
 
     <table class="table">
 
         <tr>
             <th>Username</th>
-            @foreach (var role in Model.URoles)
+            <th>Status</th>
+            @foreach (var role in Model.UserRoles)
             {
                 <th>@role.Name</th>
             }
@@ -42,39 +41,35 @@
         {
             <tr>
                 <td>@user.UserName</td>
+                <td>@(user.LockoutEnd > DateTime.Now?"Locked Out":"Free to roam the forums") </td>
 
-                @foreach (var role in Model.URoles)
+                @foreach (var role in Model.UserRoles)
                 {
                     if (await Model._userManager.IsInRoleAsync(user, role.Name))
                     {
                         <td>
-                            <a href="?RemoveUserId=@user.Id&Role=@role.Name" class="bg-success text-white p-1">Ja</a>
+                            <a href="?RemoveUserId=@user.Id&Role=@role.Name" class="bg-success text-white p-1"><i class="bi bi-check-circle"></i></a>
                         </td>
                     }
                     else
                     {
                         <td>
-                            <a href="?AddUserId=@user.Id&Role=@role.Name" class="bg-danger text-white p-1">Nej</a>
+                            <a href="?AddUserId=@user.Id&Role=@role.Name" class="bg-danger text-white p-1"><i class="bi bi-x-circle"></i></a>
                         </td>
                     }
                 }
-
-
-
-
-
             </tr>
         }
 
     </table>
-
 </div>
 
 <div>
     <form method="post">
-        <label for="RoleName">Ny roll</label>
+        <label for="RoleName">New Role</label>
         <input name="RoleName" id="RoleName" />
-        <input type="submit" value="Skapa ny roll" />
+        <input type="submit" value="Create new Role" />
     </form>
 
+</div>
 </div>

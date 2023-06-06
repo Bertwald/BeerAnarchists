@@ -1,17 +1,38 @@
 ﻿using Forum.Data;
 using Forum.Data.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Forum.Services;
 /// <summary>
 /// Used by administrator to perform different admin associated tasks
 /// </summary>
+
 public sealed class AdminService {
 
     private readonly ForumDbContext _context;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
-    public AdminService(ForumDbContext context) {
+    public AdminService(ForumDbContext context, RoleManager<IdentityRole> roleManager) {
         _context = context;
+        _roleManager = roleManager;
+    }
+
+    public async Task<bool> AddRoleAsync(string newRole) {
+        if (newRole == null) {
+            return false;
+        }
+        if (await _roleManager.RoleExistsAsync(newRole)) {
+            return false;
+        }
+        var Role = new IdentityRole {
+            Name = newRole,
+        };
+
+        await _roleManager.CreateAsync(Role);
+
+        return true;
+
     }
 
     public IEnumerable<PostReport> GetReportedPosts(ReportStatus? status = null) {
@@ -37,7 +58,7 @@ public sealed class AdminService {
         if (report == null || report.Status == status) {
             return false;
         }
-            //Special troll treatment
+        //Special troll treatment
         if (status == ReportStatus.Trollstatus) {
             var culprit = report.Reported;
             if (culprit != null) {
@@ -60,7 +81,7 @@ public sealed class AdminService {
         return default;
     }
 
-    public async Task<PostReport> GetPostReportById(int id) {
+    public async Task<PostReport?> GetPostReportById(int id) {
         return await _context.PostReports
             .Where(report => report.Id == id)
             .Include(x => x.Reported)
