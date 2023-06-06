@@ -38,19 +38,25 @@
                             //var messages = 
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-page="/Group/Group" asp-route-userId=@UserManager.GetUserId(User) style="color:#f6d56d">
-                                  <i class="bi bi-envelope"></i> Groups 
-                                  <span class="badge rounded-pill bg-light text-dark"> 
-                                         @UserService.GetNumberInGroupMessages(user.Id)
-                                  </span>
+                                    <i class="bi bi-people-fill"></i> Groups
+                                    @if (UserService.GetNumberInGroupMessages(user.Id) > 0)
+                                    {
+                                        <span class="badge rounded-pill bg-danger text-light"> 
+                                            @UserService.GetNumberInGroupMessages(user.Id)
+                                        </span>
+                                    }
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-page="/Message/Inbox" asp-route-userId=@UserManager.GetUserId(User) style="color:#f6d56d">
-                                <i class="bi bi-envelope"></i> Messages 
-                                  <span class="badge rounded-pill bg-light text-dark"> 
-                                         @UserService.GetNumberInInbox(user.Id)
-                                  </span>
-                                  </a>
+                                        <i class="bi bi-envelope"></i>
+                                        <span>Messages</span>
+                                    @if (UserService.GetNumberInInbox(user.Id) > 0) {
+                                            <span class="badge rounded-pill bg-danger text-light"> 
+                                                @UserService.GetNumberInInbox(user.Id)
+                                        </span>
+                                    }
+                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-page="/Profile/ManageUserProfile" asp-route-userId=@UserManager.GetUserId(User) style="color:#f6d56d">Profile</a>
