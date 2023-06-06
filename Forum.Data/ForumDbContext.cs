@@ -23,6 +23,12 @@ public class ForumDbContext : IdentityDbContext<ForumUser> {
         builder.Entity<ForumUser>()
             .HasMany(e => e.OwnedGroups)
             .WithOne(e => e.Creator);
+        builder.Entity<ForumUser>()
+            .HasMany(e => e.Applications)
+            .WithMany(e => e.Applicants);
+        builder.Entity<ForumUser>()
+            .HasMany(e => e.Invitations)
+            .WithMany(e => e.Invitees);
 
         builder.Entity<PrivateMessage>()
             .HasOne(e => e.Reciever)
@@ -40,6 +46,7 @@ public class ForumDbContext : IdentityDbContext<ForumUser> {
     public DbSet<Group> Groups { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<PrivateMessage> PrivateMessages { get; set; }
+    public DbSet<GroupMessage> GroupMessages { get; set; }
     public DbSet<ForumPost> ForumPosts { get; set; }
     public DbSet<PostReport> PostReports { get; set; }
     public DbSet<ForumThread> ForumThreads { get; set; }

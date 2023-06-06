@@ -6,4 +6,7 @@ public class Group {
     public DateTime Created { get; set; }
     public required virtual ForumUser Creator { get; set; }
     public virtual IEnumerable<ForumUser> Members { get; set; } = new List<ForumUser>();
+    public virtual IEnumerable<ForumUser> Applicants { get; set; } = new List<ForumUser>();
+    public virtual IEnumerable<ForumUser> Invitees { get; set; } = new List<ForumUser>();
+
 }

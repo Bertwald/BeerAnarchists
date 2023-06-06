@@ -18,7 +18,7 @@ public sealed class UserService : IUser {
     public async Task<bool> AddIgnoredAsync(string userId, string ignoredId) {
         var user = _db.Users.Where(user => user.Id == userId).Include(user => user.Ignored).First();
         var ignored = await _db.Users.FindAsync(ignoredId);
-        if(user == null || ignored == null || user == ignored){
+        if (user == null || ignored == null || user == ignored) {
             return false;
         }
         if (user.Ignored.Contains(ignored)) {
@@ -29,7 +29,8 @@ public sealed class UserService : IUser {
 
         try {
             await _db.SaveChangesAsync();
-        } catch (Exception) {
+        }
+        catch (Exception) {
             throw;
         }
         return true;
@@ -57,7 +58,7 @@ public sealed class UserService : IUser {
     }
 
     public async Task<IEnumerable<PrivateMessage>> GetInboxAsync(string userId) {
-        if(userId == null) {
+        if (userId == null) {
             return Enumerable.Empty<PrivateMessage>();
         }
         var messages = _db.PrivateMessages.Where(message => message.Reciever.Id == userId);
@@ -69,19 +70,20 @@ public sealed class UserService : IUser {
     }
 
     public async Task SendMessageAsync(PrivateMessage message) {
-        if(message == null) {
+        if (message == null) {
             return;
         }
         _db.Messages.Add(message);
         try {
             await _db.SaveChangesAsync();
-        } catch (Exception) {
+        }
+        catch (Exception) {
             throw;
         }
     }
 
     public async Task<ForumUser?> GetUserAllInclusiceAsync(string userId) {
-        if(userId == null) {
+        if (userId == null) {
             return null;
         }
         return await _db.Users
@@ -89,5 +91,158 @@ public sealed class UserService : IUser {
             .Include(user => user.Friends)
             .Include(user => user.Ignored)
             .FirstAsync();
+    }
+
+    public int GetNumberInInbox(string userId) {
+        if (userId == null) {
+            return default;
+        }
+        return _db.PrivateMessages.Where(x => x.Reciever.Id == userId).Count();
+    }
+
+    public int GetNumberInGroupMessages(string userId) {
+        if (userId == null) {
+            return default;
+        }
+        return _db.GroupMessages.Where(x => (x.Recievers.Where(y => y.Id == userId)).Any()).Count();
+    }
+
+    public async Task<bool> AddGroupInvitation(string userId, int groupId) {
+        if (userId == null) {
+            return false;
+        }
+        var user = await _db.ForumUsers
+                    .Where(x => x.Id == userId)
+                    .Include(x => x.Invitations)
+                    .FirstOrDefaultAsync();
+        var group = await _db.Groups
+            .Where(x => x.Id == groupId)
+            .Include(x => x.Invitees)
+            .FirstOrDefaultAsync();
+
+        if (user != null && group != null) {
+            user.Invitations = user.Invitations.Append(group).ToList();
+            group.Invitees = group.Invitees.Append(user).ToList();
+
+            _db.Entry(user).State = EntityState.Modified;
+            _db.Entry(group).State = EntityState.Modified;
+
+            try {
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception) {
+                throw;
+            }
+
+            return true;
+        }
+        return false;
+    }
+
+    public async Task<bool> AddGroupApplication(string userId, int groupId) {
+        if (userId == null) {
+            return false;
+        }
+        var user = await _db.ForumUsers
+            .Where(x => x.Id == userId)
+            .Include(x => x.Applications)
+            .FirstOrDefaultAsync();
+        var group = await _db.Groups
+            .Where(x => x.Id == groupId)
+            .Include(x => x.Applicants)
+            .FirstOrDefaultAsync();
+
+        if (user != null && group != null) {
+            user.Applications = user.Applications.Append(group).ToList();
+            group.Applicants = group.Applicants.Append(user).ToList();
+
+            _db.Entry(user).State = EntityState.Modified;
+            _db.Entry(group).State = EntityState.Modified;
+
+            try {
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception) {
+                throw;
+            }
+
+            return true;
+        }
+        return false;
+    }
+
+    public async Task<Group?> SearchGroup(string searchstring) {
+        return await _db.Groups.Where(group => group.Name == searchstring).FirstOrDefaultAsync();
+    }
+
+    public async Task AcceptInvitation(string userId, int groupId) {
+        if (userId == null) {
+            return;
+        }
+        var user = await _db.ForumUsers
+            .Where(x => x.Id == userId)
+            .Include(x => x.Invitations)
+            .Include(x => x.MemberGroups)
+            .FirstOrDefaultAsync();
+        var group = await _db.Groups
+            .Where(x => x.Id == groupId)
+            .Include(x => x.Invitees)
+            .Include(x => x.Members)
+            .FirstOrDefaultAsync();
+
+        if ((user?.Invitations.Contains(group) ?? false) && (group?.Invitees.Contains(user) ?? false)) {
+            user.Invitations = user.Invitations.Where(x => x != group).ToList();
+            group.Invitees = group.Invitees.Where(x => x != user).ToList();
+
+            group.Members = group.Members.Append(user).ToList();
+            user.MemberGroups = user.MemberGroups.Append(group).ToList();
+
+            _db.Entry(user).State = EntityState.Modified;
+            _db.Entry(group).State = EntityState.Modified;
+            try {
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception) {
+                throw;
+            }
+        }
+    }
+
+    public async Task AcceptApplicant(string ownerId, string applicantId, int groupId) {
+        if (applicantId == null || ownerId == null) {
+            return;
+        }
+        var owner = await _db.ForumUsers
+            .Where(x => x.Id == ownerId)
+            .Include(x => x.OwnedGroups)
+            .FirstOrDefaultAsync();
+        var applicant = await _db.ForumUsers
+            .Where(x => x.Id == applicantId)
+            .Include(x => x.Applications)
+            .Include(x => x.MemberGroups)
+            .FirstOrDefaultAsync();
+        var group = await _db.Groups
+            .Where(x => x.Id == groupId)
+            .Include(x => x.Creator)
+            .Include(x => x.Applicants)
+            .Include(x => x.Members)
+            .FirstOrDefaultAsync();
+
+        if ((applicant?.Applications.Contains(group) ?? false) && (group?.Applicants.Contains(applicant) ?? false) && group.Creator == owner) {
+            applicant.Invitations = applicant.Invitations.Where(x => x != group).ToList();
+            group.Invitees = group.Invitees.Where(x => x != applicant).ToList();
+
+            group.Members = group.Members.Append(applicant).ToList();
+            applicant.MemberGroups = applicant.MemberGroups.Append(group).ToList();
+
+            _db.Entry(applicant).State = EntityState.Modified;
+            _db.Entry(group).State = EntityState.Modified;
+            try {
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception) {
+                throw;
+            }
+        }
     }
 }

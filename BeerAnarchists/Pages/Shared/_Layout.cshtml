@@ -1,7 +1,9 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@using Forum.Data.Interfaces;
+@using Microsoft.AspNetCore.Identity
 
 @inject SignInManager<Forum.Data.Models.ForumUser> SignInManager
 @inject UserManager<Forum.Data.Models.ForumUser> UserManager
+@inject IUser UserService
 @inject RoleManager<IdentityRole> RoleManager
 
 <!DOCTYPE html>
@@ -32,11 +34,23 @@
                         </li>
                         @*Only For logged in users*@
                         @if(SignInManager.IsSignedIn(User)) {
+                            var user = await UserManager.GetUserAsync(User);
+                            //var messages = 
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-page="/Group/Group" asp-route-userId=@UserManager.GetUserId(User) style="color:#f6d56d">Groups</a>
+                                <a class="nav-link" asp-area="" asp-page="/Group/Group" asp-route-userId=@UserManager.GetUserId(User) style="color:#f6d56d">
+                                  <i class="bi bi-envelope"></i> Groups 
+                                  <span class="badge rounded-pill bg-light text-dark"> 
+                                         @UserService.GetNumberInGroupMessages(user.Id)
+                                  </span>
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-page="/Message/Inbox" asp-route-userId=@UserManager.GetUserId(User) style="color:#f6d56d">Messages</a>
+                                <a class="nav-link" asp-area="" asp-page="/Message/Inbox" asp-route-userId=@UserManager.GetUserId(User) style="color:#f6d56d">
+                                <i class="bi bi-envelope"></i> Messages 
+                                  <span class="badge rounded-pill bg-light text-dark"> 
+                                         @UserService.GetNumberInInbox(user.Id)
+                                  </span>
+                                  </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-page="/Profile/ManageUserProfile" asp-route-userId=@UserManager.GetUserId(User) style="color:#f6d56d">Profile</a>

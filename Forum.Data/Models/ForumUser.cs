@@ -14,4 +14,6 @@ public class ForumUser : IdentityUser {
     public virtual IEnumerable<ForumUser> Ignored { get; set; } = new List<ForumUser>();
     public virtual IEnumerable<Group> MemberGroups { get; set; } = new List<Group>();
     public virtual IEnumerable<Group> OwnedGroups { get; set; } = new List<Group>();
+    public virtual IEnumerable<Group> Applications { get; set; } = new List<Group>();
+    public virtual IEnumerable<Group> Invitations { get; set; } = new List<Group>();
 }
