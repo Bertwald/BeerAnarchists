@@ -11,20 +11,20 @@ public class PostReportModel : PageModel {
     private readonly UserManager<ForumUser> _userManager;
 
     [BindProperty]
-    public string ReporterId { get; set; }
+    public string? ReporterId { get; set; }
     [BindProperty]
     public string ReportedId { get; set; }
     [BindProperty]
     public int PostId { get; set; }
     [BindProperty]
-    public string ReportMessage { get; set; }
+    public string? ReportMessage { get; set; }
 
     public PostReportModel(IForumPost postManager, UserManager<ForumUser> userManager) {
         _postManager = postManager;
         _userManager = userManager;
     }
 
-    public async Task<ActionResult> OnGetAsync(string reporterId, string reportedId, int postId) {
+    public async Task<ActionResult> OnGetAsync(string? reporterId, string reportedId, int postId) {
         ReporterId= reporterId;
         ReportedId= reportedId;
         PostId= postId;

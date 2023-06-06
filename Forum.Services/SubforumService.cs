@@ -48,7 +48,7 @@ public sealed class SubforumService : ISubforum {
     }
 
     public IEnumerable<SubForum> GetSubforums() {
-        return _context.Subfora.Include(subforum => subforum.ForumThreads);
+        return _context.Subfora.Include(subforum => subforum.ForumThreads).ThenInclude(thread => thread.Posts);
     }
 
     public Task UpdateDescription(int id, string description) {

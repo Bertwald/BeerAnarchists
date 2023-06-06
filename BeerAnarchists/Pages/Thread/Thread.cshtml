@@ -11,29 +11,33 @@
 }
 
 @functions{
-  async Task DisplayPostsAsTree(IEnumerable<Forum.Data.Models.ForumPost> posts, int alternation, string userID, int depth = 0) {
-        @foreach (var post in posts)
-        {
+        async Task DisplayPostsAsTree(IEnumerable<Forum.Data.Models.ForumPost> posts, int alternation, string userID, int depth = 0) {
+          int alt = alternation;  
+          foreach (var post in posts)
+          {
+            alt = (alt+1) % 2;
                 <div style="padding-left:@(Math.Min(depth * 20, 120))px; margin-bottom:10px">
                     @{
-                        await DisplayPost(post, alternation*2+depth%2, userID);
+                        await DisplayPost(post, (alt*2+depth)%4, userID);
                       }
                 </div>
                 @if (post.Replies != null && post.Replies.Any())
                 {
-                    await DisplayPostsAsTree(post.Replies, alternation, userID, depth+1);
-                }
+                    await DisplayPostsAsTree(post.Replies, alt, userID, depth+1);
+            }
         }
     }
     async Task DisplayPost(Forum.Data.Models.ForumPost post, int colorIndex, string UserId) {
         #region Constants
+        //Ugly grey
         //var Color = new string[]{ "#999999", "#6B6B6B", "#808080", "#5C5C5C" }[colorIndex];
         var Color = new string[]{ "#DDA0DD", "#C54B8C", "#D8BFD8", "#E0B0FF" }[colorIndex];
         var bordercolor = (await UserManager.IsInRoleAsync(post.Author, "Admin")) ? "gold" : "black";
         var viewer = await UserManager.GetUserAsync(User);
+        string? disabled = viewer == null ? "disabled" : null;
         #endregion
 
-     #region Post -->
+     #region ForumPost Contents -->
         <div style="background-color:@Color; border: 1px solid @bordercolor;">
      <!-- #region Post Heading -->
       <div class="row" style="border-bottom: 1px solid black; margin:5px; padding:5px">
@@ -41,7 +45,7 @@
           @(post.Author.Alias ?? post.Author.UserName) @(post.Ancestor == null ? "wrote:" : "replied:")
         </div>
         <div class="col" style="text-align:right">
-          #@post.Id
+          Post #@post.Id
         </div>
       </div>
      <!-- #endregion -->
@@ -82,20 +86,20 @@
     <!-- #region Post Footer, Button Area -->
       <div class="row" style="margin-top:10px; margin-bottom:10px;">
         <div class="col-2"></div>
-        <div class="col-5 btn-group-sm">
-        <a class="btn btn-primary btn-sm" asp-page="/AddReaction" asp-route-userId=@UserId asp-route-postId=@post.Id asp-route-threadId=@Model.Id asp-route-type=@ReactionType.Like>
+        <div class="col-5 btn-group-sm" >
+        <a class="btn btn-primary btn-sm @disabled" asp-page="/AddReaction" asp-route-userId=@UserId asp-route-postId=@post.Id asp-route-threadId=@Model.Id asp-route-type=@ReactionType.Like>
           <i class="bi bi-hand-thumbs-up-fill"></i>
           <span class="badge rounded-pill bg-light text-dark"> 
             @post.Reactions.Where(x => x.Type == Forum.Data.Models.ReactionType.Like).Count()
           </span>
         </a>
-        <a class="btn btn-primary btn-sm" asp-page="/AddReaction" asp-route-userId=@UserId asp-route-postId=@post.Id asp-route-threadId=@Model.Id asp-route-type=@ReactionType.Dislike>
+        <a class="btn btn-primary btn-sm @disabled" asp-page="/AddReaction" asp-route-userId=@UserId asp-route-postId=@post.Id asp-route-threadId=@Model.Id asp-route-type=@ReactionType.Dislike>
           <i class="bi bi-hand-thumbs-down-fill"></i>
           <span class="badge rounded-pill bg-light text-dark"> 
             @post.Reactions.Where(x => x.Type == Forum.Data.Models.ReactionType.Dislike).Count()
            </span>
         </a>
-        <a class="btn btn-primary btn-sm" asp-page="/AddReaction" asp-route-userId=@UserId asp-route-postId=@post.Id asp-route-threadId=@Model.Id asp-route-type=@ReactionType.Heart>
+        <a class="btn btn-primary btn-sm @disabled" asp-page="/AddReaction" asp-route-userId=@UserId asp-route-postId=@post.Id asp-route-threadId=@Model.Id asp-route-type=@ReactionType.Heart>
           <i class="bi bi-heart-fill"></i>
           <span class="badge rounded-pill bg-light text-dark"> 
             @post.Reactions.Where(x => x.Type == Forum.Data.Models.ReactionType.Heart).Count()
@@ -112,7 +116,7 @@
                     }
         </div>
 
-        <div class="col-3" style="text-align:right">
+        <div class="col-3" style="text-align:center">
           @post.Created
         </div>
       </div>
@@ -122,9 +126,11 @@
     }
 }
 
-<div>
-    <h3 class="display-4 text-center">@Model.Title</h3>
-    <p style="text-align:center"> @Model.Description</p>
+<div class="container pt-3">
+<div class="row text-center">
+    <h3 class="display-4">@Model.Title</h3>
+    <p> @Model.Description</p>
+</div>
 
     @if (SignInManager.IsSignedIn(User))
     {
@@ -136,12 +142,8 @@
     }
 
     <div class="text-left" style="margin-top: 5px">
-        @{
-            int outerAlternation = 0;
-        }
         @if(Model.Posts != null){
-            await DisplayPostsAsTree(Model.Posts.Where(x => x.Ancestor is null), outerAlternation, user?.Id ,0);
-            outerAlternation = outerAlternation++ % 2;
+            await DisplayPostsAsTree(Model.Posts.Where(x => x.Ancestor is null), 0, user?.Id ,0);
         }
     </div>
 </div>

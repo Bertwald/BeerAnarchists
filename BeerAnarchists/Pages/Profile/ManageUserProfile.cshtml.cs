@@ -18,7 +18,6 @@ public class ManageUserProfileModel : PageModel {
         _userManager = userManager;
         _forumDbContext = forumDbContext;
         _userService = userService;
-        //CurrentUserData = new UserDataHolder() {Ignored = new List<ForumUser>()};
     }
 
     [BindProperty]
@@ -77,7 +76,7 @@ public class ManageUserProfileModel : PageModel {
                 throw;
             }
         }
-        return Page();//RedirectToPage($"/Profile/Profile", new { userId = CurrentUserData.UserId });
+        return Page();
     }
 
     public class UserDataHolder {

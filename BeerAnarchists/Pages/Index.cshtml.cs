@@ -29,15 +29,9 @@ public class IndexModel : PageModel {
             Author = x.Author,
             Description = x.Description,
             ImageUrl = x.ImageUrl,
-            Title = x.Title
-        });
-        
-        
-        
-        //if (currentUser != null) {
-        //    var test = await client.GetFromJsonAsync<ForumUser>($"/forum/UserByMail/{currentUser?.Email}");
-        //    var result = await client.DeleteAsync($"/forum/DeleteThread/1");
-        //}
+            Title = x.Title,
+            NumberOfPosts = x.ForumThreads.SelectMany(x => x.Posts).Count(),
+        }) ;
 
 
 
@@ -49,5 +43,6 @@ public class IndexModel : PageModel {
         public string? Description { get; set; }
         public string? Author { get; set; }
         public string? ImageUrl { get; set; }
+        public int NumberOfPosts { get; set; }
     }
 }

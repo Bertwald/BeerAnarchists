@@ -18,13 +18,14 @@ html {
 }
 
 body {
+  user-select:none;
   background-color: cornsilk;
   margin-bottom: 60px;
 }
 
 /*This will be the logo once we have one*/
 .logo{
-  background-image: url("/img/logo.jpg");
+  background-image: url("~/img/logo.jpg");
   background-size: 100%;
   background-repeat: no-repeat;
   padding-right: 20px;
