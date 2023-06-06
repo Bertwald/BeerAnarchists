@@ -36,7 +36,7 @@
                             var user = await UserManager.GetUserAsync(User);
                             //var messages = 
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-page="/Group/Group" asp-route-userId=@UserManager.GetUserId(User) style="color:#f6d56d">
+                                <a class="nav-link" asp-area="" asp-page="/Group/Groups" asp-route-userId=@UserManager.GetUserId(User) style="color:#f6d56d">
                                     <i class="bi bi-people-fill"></i> Groups
                                     @if (UserService.GetNumberInGroupMessages(user.Id) > 0)
                                     {

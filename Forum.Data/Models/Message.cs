@@ -9,6 +9,7 @@ public abstract class Message {
 }
 
 public class PrivateMessage : Message {
+    public bool Read { get; set; }
     public required virtual ForumUser Reciever { get; set; }
 }
 public class GroupMessage : Message {

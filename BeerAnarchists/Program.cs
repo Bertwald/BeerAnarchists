@@ -46,36 +46,11 @@ public class Program {
             options.SlidingExpiration = true;
         });
 
-        // Add services to the container.
         builder.Services.AddRazorPages();
         builder.Services.AddAuthentication()
             .AddCookie();
-        //.AddJwtBearer();
-        builder.Services.AddAuthorization(
-        //options => {
-        //    options.FallbackPolicy = new AuthorizationPolicyBuilder()
-        //        .RequireAuthenticatedUser()
-        //        .Build();
-        //}
-        );
-        /*
-        builder.Services.AddAuthentication(options => {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-        .AddJwtBearer(options => {
-            options.SaveToken = true;
-            options.RequireHttpsMetadata = false;
-            options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters 
-            {
-                ValidateIssuer = true,
-                ValidateAudience = false,
-                ValidateLifetime = false,
-                ValidateIssuerSigningKey = true
-            };
-        });
-        */
+        builder.Services.AddAuthorization();
+     
         var app = builder.Build();
 
 

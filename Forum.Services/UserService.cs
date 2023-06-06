@@ -90,6 +90,10 @@ public sealed class UserService : IUser {
             .Where(user => user.Id == userId)
             .Include(user => user.Friends)
             .Include(user => user.Ignored)
+            .Include(user => user.OwnedGroups)
+            .Include(user => user.MemberGroups)
+            .Include(user => user.Invitations)
+            .Include(user => user.Applications)
             .FirstAsync();
     }
 
@@ -97,7 +101,7 @@ public sealed class UserService : IUser {
         if (userId == null) {
             return default;
         }
-        return _db.PrivateMessages.Where(x => x.Reciever.Id == userId).Count();
+        return _db.PrivateMessages.Where(x => x.Reciever.Id == userId && x.Read==false).Count();
     }
 
     public int GetNumberInGroupMessages(string userId) {
