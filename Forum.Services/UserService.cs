@@ -3,6 +3,8 @@ using Forum.Data.Interfaces;
 using Forum.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Forum.Services;
 /// <summary>
@@ -61,7 +63,8 @@ public sealed class UserService : IUser {
         if (userId == null) {
             return Enumerable.Empty<PrivateMessage>();
         }
-        var messages = _db.PrivateMessages.Where(message => message.Reciever.Id == userId);
+        var userIgnored = _db.Users.SelectMany(user => user.Ignored);
+        var messages = _db.PrivateMessages.Where(message => message.Reciever.Id == userId && !userIgnored.Contains(message.Sender));
         return messages.Include(x => x.Sender).Include(x => x.Reciever).AsEnumerable();
     }
 
@@ -101,7 +104,10 @@ public sealed class UserService : IUser {
         if (userId == null) {
             return default;
         }
-        return _db.PrivateMessages.Where(x => x.Reciever.Id == userId && x.Read==false).Count();
+        var userIgnored = _db.Users.SelectMany(user => user.Ignored);
+        var messages = _db.PrivateMessages.Where(x => x.Reciever.Id == userId && x.Read==false && !userIgnored.Contains(x.Sender));
+
+        return messages.Count();
     }
 
     public int GetNumberInGroupMessages(string userId) {
@@ -245,6 +251,87 @@ public sealed class UserService : IUser {
                 await _db.SaveChangesAsync();
             }
             catch (Exception) {
+                throw;
+            }
+        }
+    }
+
+    public async Task<IEnumerable<GroupMessage>> GetGroupMessages(string userId) {
+        var user = _db.ForumUsers.Where(x => x.Id == userId).FirstOrDefault();
+        return await _db.GroupMessages.Where(x => x.Recievers.Contains(user)).ToListAsync();
+    }
+
+    public async Task<IEnumerable<Group>> GetUserGroups(string userId) {
+        List<Group> groups = new();
+
+        var ownedGroups = await _db.Users.Where(x => x.Id == userId).SelectMany(x => x.OwnedGroups).ToListAsync();
+        var memberGroups = await _db.Users.Where(x => x.Id == userId).SelectMany(x => x.OwnedGroups).ToListAsync();
+
+        groups.AddRange(ownedGroups);
+        groups.AddRange(memberGroups);
+
+        return groups;
+    }
+
+    public async Task CreateGroup(string ownerId, string groupName) {
+        if(ownerId == null || groupName == null) {
+            return;
+        }
+        var user = _db.ForumUsers.Where(x => x.Id == ownerId).FirstOrDefault();
+        if (user != null) {
+            var newGroup = new Group { Creator = user, Name = groupName };
+            _db.Groups.Add(newGroup);
+
+            try {
+                await _db.SaveChangesAsync();
+            } catch (Exception) {
+                throw;
+            }
+        }
+    }
+
+    public async Task<bool> RemoveIgnoredAsync(string userId, string ignoredId) {
+        var user = _db.ForumUsers.Where(x => x.Id == userId).Include(x => x.Ignored).FirstOrDefault();
+        if (user != null) {
+            user.Ignored = user.Ignored.Where(x => x.Id != ignoredId).ToList();
+            _db.Entry(user).State = EntityState.Modified;
+            try {
+                await _db.SaveChangesAsync();
+            } catch (Exception) {
+                throw;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public async Task<bool> RemoveFriendAsync(string userId, string friendId) {
+        var user = _db.ForumUsers.Where(x => x.Id == userId).Include(x => x.Friends).FirstOrDefault();
+        if (user != null) {
+            user.Friends = user.Friends.Where(x => x.Id != friendId).ToList();
+            _db.Entry(user).State = EntityState.Modified;
+            try {
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception) {
+                throw;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public async Task DeleteGroup(string ownerId, int groupId) {
+        if(groupId == 0 || ownerId == null) {
+            return;
+        }
+        var group = _db.Groups.Where(x => x.Id == groupId && x.Creator.Id == ownerId).FirstOrDefault();
+        if(group != null) {
+            _db.Groups.Remove(group);
+
+            try {
+                await _db.SaveChangesAsync();
+            } catch(Exception) {
                 throw;
             }
         }

@@ -90,4 +90,8 @@ public sealed class AdminService {
             .FirstOrDefaultAsync();
     }
 
+    public int GetNumberOfNewReports() {
+        return _context.PostReports.Where(x => x.Status == ReportStatus.None).Count();
+    }
+
 }

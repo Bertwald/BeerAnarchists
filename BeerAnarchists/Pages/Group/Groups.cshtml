@@ -1,28 +1,208 @@
-﻿@page
+﻿@page "{handler?}"
+@using Forum.Data.Interfaces;
+@using Forum.Data.Models;
+@using Forum.Services;
+@using Microsoft.AspNetCore.Identity;
 @model BeerAnarchists.Pages.Groups.GroupsModel
+@inject UserManager<ForumUser> UserManager
+@inject IUser UserService
 @{
-  ViewData["Title"] = "Managing my groups";
+    ViewData["Title"] = "Managing my groups";
+    var user = await UserManager.GetUserAsync(User);
 }
 
 <div class="container">
   <div class="row">
-    <h3>
+    <h3 class="text-center">
       My friends
     </h3>
+      <table class="table table-dark table-striped table-hover">
+        <thead>
+          <tr>
+            <td>Username</td>
+            <td>Mail</td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </thead>
+            @foreach(var friend in Model.Friends) {
+                <tr>
+                  <td>@(friend.Alias??friend.UserName)</td>
+                  <td>@friend.Email</td>
+                  <td><a class="btn btn-primary btn-sm" asp-page="/Message/PrivateMessage" asp-route-senderId=@user?.Id asp-route-recieverId=@friend.Id>
+                  Send PM <i class="bi bi-envelope"></i>
+                </a></td>
+                  <td><a asp-page="/Profile/DisplayProfile" asp-route-viewerId=@user?.Id asp-route-userId=@friend.Id> View Profile </a></td>
+                  <td>
+                  <a class="btn btn-success btn-sm" asp-page-handler="RemoveFriend" asp-route-friendId=@friend.Id asp-route-userId=@user?.Id>
+                      Unfriend <i class="bi bi-person-dash-fill"></i>
+                  </a>
+                  </td>
+                </tr>
+            }
+      </table>
+    <h3 class="text-center">
+      Blocked Users
+    </h3>
+      <table class="table table-dark table-striped table-hover">
+        <thead>
+          <tr>
+            <td>Username</td>
+            <td>Mail</td>
+            <td></td>
+            <td></td>
+          </tr>
+        </thead>
+            @foreach(var ignored in Model.Ignored) {
+                <tr>
+                  <td>@(ignored.Alias??ignored.UserName)</td>
+                  <td>@ignored.Email</td>
+                  <td><a asp-page="/Profile/DisplayProfile" asp-route-viewerId=@user?.Id asp-route-userId=@ignored.Id> View Profile </a></td>
+                  <td>
+                    <a class="btn btn-success btn-sm" asp-page-handler="RemoveIgnored" asp-route-userId=@user?.Id asp-route-ignoredId=@ignored.Id>
+                        Unblock <i class="bi bi-person-check-fill"></i>
+                    </a>
+                  </td>
+                </tr>
+            }
+      </table>
   </div>
   <div class="row">
-    <h3>
+    <h3 class="text-center">
+      My Invites
+    </h3>
+
+  </div>
+
+  <div class="row">
+    <h3 class="text-center">
       My recieved Group Messages
     </h3>
+            @foreach(var message in Model.GroupMessages) {
+        <div class="row">
+          <div class="card m-2" style="border: 1px solid rgba(0,0,0,0.7)">
+            <div class="card-header">
+              <div class ="row justify-content-between">
+              <div class="col-3">
+                <p class="card-text">From: @(message.Sender.Alias ?? message.Sender.UserName)</p>
+              </div>
+              <div class="col-3">
+                <p class="card-text" style="text-align:right">Sent: @message.Created.ToLongDateString()</p>
+              </div>
+              </div>
+              <div class="row">
+                <p class="card-text">Subject: <b>@message.Title</b></p>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="card-text">The message reads:</p>
+              <p class="card-text" style="border: 1px solid darkgrey; background-color:floralwhite">@message.Content</p>
+            </div>
+            <div class="card-footer">
+              <div class="row justify-content-center">
+                <div class="col-4 btn-group-sm">
+                </div>
+               </div>
+            </div>
+          </div>
+        </div>
+                
+            }
   </div>
   <div class="row">
-    <h3>
+    <h3 class="text-center">
       Manage my Groups
     </h3>
-  </div>
+    <table class="table table-dark table-striped table-hover">
+      <thead>
+          <tr>
+            <td>Group</td>
+            <td>#Members</td>
+            <td></td>
+            <td></td>
+          </tr>
+        </thead>
+        @foreach(var group in Model.OwnedGroups) {
+            <tr>
+              <td>@group.Name</td>
+              <td>@group.Members.Count()</td>
+              <td>
+                <a class="btn btn-primary btn-sm" asp-page="/Message/GroupMessage" asp-route-senderGroupId=@group.Id>
+                  Send Group Message <i class="bi bi-envelope"></i>
+                </a>
+              </td>
+              <td>
+                <a class="btn btn-danger btn-sm" asp-page-handler="DeleteGroup" asp-route-userId=@user?.Id asp-route-groupId=@group.Id>
+                  Delete <i class="bi bi-exclamation-diamond-fill"></i>
+                </a>
+                  </td>
+                </tr>
+        }
+        </table>
+
+        <div class="row">
+          <form method="post" enctype="multipart/form-data">
+
+            <label asp-for="NewGroupName" class="form-label">Group Name</label>
+            <textarea asp-for="NewGroupName" class="form-control" cols="40" rows="1"></textarea>
+            @Html.HiddenFor(m => m.OwnerId)
+            <input type="submit" class="btn btn-success" value="Add new Group">
+          </form>
+        </div>
+
+
+
+
+        <h3 class="text-center">
+          Applications
+        </h3>
+        <table class="table table-dark table-striped table-hover">
+      <thead>
+          <tr>
+            <td>Group</td>
+            <td>Applicand</td>
+            <td></td>
+            <td></td>
+          </tr>
+        </thead>
+        @foreach(var group in Model.OwnedGroups) {
+          foreach(var applicant in group.Applicants){
+            <tr>
+                  <td>@group.Name</td>
+                  <td>@(applicant.Alias??applicant.UserName)</td>
+                  <td>
+                    Button Accept
+                    </td>
+                  <td>
+                    Button Reject
+                    </td>
+            </tr>
+        }
+        }
+        </table>
+    </div>
   <div class="row">
-    <h3>
+    <h3 class="text-center">
       My Friends Groups
     </h3>
-  </div>
+    <table class="table table-dark table-striped table-hover">
+      <thead>
+          <tr>
+            <td>Group</td>
+            <td>Owner</td>
+            <td>Apply</td>
+          </tr>
+      </thead>
+        @foreach(var group in Model.FriendGroups) {
+            <tr>
+              <td>@group.Name</td>
+              <td>@(group.Creator.Alias??group.Creator.UserName)</td>
+              <td>
+                Button
+              </td>
+            </tr>
+        }
+        </table>
+    </div>
 </div>

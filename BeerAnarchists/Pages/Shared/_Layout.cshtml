@@ -1,8 +1,10 @@
 ﻿@using Forum.Data.Interfaces;
+@using Forum.Services;
 @using Microsoft.AspNetCore.Identity
 
 @inject SignInManager<Forum.Data.Models.ForumUser> SignInManager
 @inject UserManager<Forum.Data.Models.ForumUser> UserManager
+@inject AdminService AdminService
 @inject IUser UserService
 @inject RoleManager<IdentityRole> RoleManager
 
@@ -75,7 +77,14 @@
                             <a class="nav-link" asp-area="" asp-page="/Admin/Index" style="color:#f6d56d">Admin Users</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/Admin/ReportedPosts" style="color:#f6d56d">Reported Posts</a>
+                            <a class="nav-link" asp-area="" asp-page="/Admin/ReportedPosts" style="color:#f6d56d">
+                              <span>Reported Posts</span>
+                              @if (AdminService.GetNumberOfNewReports() > 0) {
+                                            <span class="badge rounded-pill bg-danger text-light"> 
+                                                @AdminService.GetNumberOfNewReports()
+                                        </span>
+                                    }
+                            </a>
                         </li>
                         }
                         @*Only For logged in users*@
