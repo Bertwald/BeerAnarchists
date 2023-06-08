@@ -90,5 +90,6 @@ public class ManageUserProfileModel : PageModel {
         public int NumberOfFriends { get; set; }
         public string? LatestPost { get; set; }
         public IEnumerable<ForumUser> Ignored { get; set; }
+        public List<ForumUser> Friends { get; set; }
     }
 }

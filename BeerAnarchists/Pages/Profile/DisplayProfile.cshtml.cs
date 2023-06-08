@@ -21,6 +21,8 @@ public class DisplayProfileModel : PageModel
         _userService = userService;
     }
 
+    public UserDataHolder ViewerData { get; set; }
+
     [BindProperty]
     public UserDataHolder CurrentUserData { get; set; }
     [BindProperty]
@@ -30,7 +32,13 @@ public class DisplayProfileModel : PageModel
         if(userId is null || viewerId is null) {
             return BadRequest();
         }
+
+        if(userId == viewerId) {
+            return RedirectToPage("./ManageUserProfile", new { userId = userId });
+        }
+
         ViewerId = viewerId;
+        var viewer = await _userService.GetUserAllInclusiceAsync(viewerId);
         var user = await _userService.GetUserAllInclusiceAsync(userId);
         CurrentUserData = new UserDataHolder {
             MemberSince = user.MemberSince.ToShortDateString(),
@@ -41,19 +49,32 @@ public class DisplayProfileModel : PageModel
             Description = user.Description,
             NumberOfPosts = user.Posts,
             NumberOfFriends = user.Friends.Count(),
+            Friends = user.Friends.ToList(),
             Ignored = user.Ignored,
             LatestPost = user.LastPost?.ToShortDateString(),
+        };
+        ViewerData = new UserDataHolder {
+            Friends = viewer.Friends.ToList(),
+            Ignored = viewer.Ignored,
         };
         return Page();
     }
 
-    public async Task<ActionResult> OnPostIgnoreUserAsync(string userId, string ignoredId) {
-        _ = await _userService.AddIgnoredAsync(userId, ignoredId);
+    public async Task<ActionResult> OnPostIgnoreUserAsync(string userId, string ignoredId, bool ignore) {
+        if (ignore) {
+            _ = await _userService.AddIgnoredAsync(userId, ignoredId);
+        } else {
+            _ = await _userService.RemoveIgnoredAsync(userId, ignoredId);
+        }
         return RedirectToPage( "./DisplayProfile", new { userId = ignoredId, viewerId = userId});
     }
 
-    public async Task<ActionResult> OnPostAddFriendAsync(string userId, string friendId) {
-        _ = await _userService.AddFriendAsync(userId, friendId);
+    public async Task<ActionResult> OnPostAddFriendAsync(string userId, string friendId, bool befriend) {
+        if (befriend) {
+            _ = await _userService.AddFriendAsync(userId, friendId);
+        } else {
+            _ = await _userService.RemoveFriendAsync(userId, friendId);
+        }
         return RedirectToPage("./DisplayProfile", new { userId = friendId, viewerId = userId });
     }
 

@@ -1,7 +1,9 @@
 ﻿@page
+@using Forum.Data.Interfaces;
 @using Forum.Data.Models;
 @using Microsoft.AspNetCore.Identity;
 @inject UserManager<ForumUser> UserManager;
+@inject IUser UserService;
 @model BeerAnarchists.Pages.Profile.DisplayProfileModel
 @{
   ViewData["Title"] = "User Profile: " + (Model.CurrentUserData.Alias ?? Model.CurrentUserData.UserName);
@@ -39,12 +41,24 @@
   <div class="row justify-content-center">
     <div class="col-5 input-group-lg">
       <form method="post" style="display:inline">
-      <button class="btn btn-warning btn-lg" asp-page-handler="AddFriend" asp-route-userId=@Model.ViewerId asp-route-friendId=@Model.CurrentUserData.UserId >Add Friend</button>
+                @if(Model.ViewerData.Friends.Where(x => x.Id == Model.CurrentUserData.UserId).Any()) {
+                    <button class="btn btn-warning btn-lg" asp-page-handler="AddFriend" asp-route-userId=@Model.ViewerId asp-route-friendId=@Model.CurrentUserData.UserId asp-route-befriend=@false>Remove Friend</button>
+                 
+                } else {
+                <button class="btn btn-warning btn-lg" asp-page-handler="AddFriend" asp-route-userId=@Model.ViewerId asp-route-friendId=@Model.CurrentUserData.UserId asp-route-befriend=@true>Add Friend</button>
+                }
       </form>
-      <a class="btn btn-primary btn-lg" asp-page="/Message/PrivateMessage" asp-route-senderId=@Model.ViewerId asp-route-recieverId=@Model.CurrentUserData.UserId >Message <i class="bi bi-envelope"></i></a>
       <form method="post" style="display:inline">
-      <button class="btn btn-warning btn-lg" asp-page-handler="IgnoreUser" asp-route-userId=@Model.ViewerId asp-route-ignoredId=@Model.CurrentUserData.UserId >Ignore User</button>
+            @if(Model.ViewerData.Ignored.Where(x => x.Id == Model.CurrentUserData.UserId).Any()) {
+                <button class="btn btn-warning btn-lg" asp-page-handler="IgnoreUser" asp-route-userId=@Model.ViewerId asp-route-ignoredId=@Model.CurrentUserData.UserId asp-route-ignore=@false>Allow User</button>
+           
+            } else {
+               <button class="btn btn-warning btn-lg" asp-page-handler="IgnoreUser" asp-route-userId=@Model.ViewerId asp-route-ignoredId=@Model.CurrentUserData.UserId asp-route-ignore=@true>Ignore User</button>
+            }
+
       </form>
+    
+      <a class="btn btn-primary btn-lg" asp-page="/Message/PrivateMessage" asp-route-senderId=@Model.ViewerId asp-route-recieverId=@Model.CurrentUserData.UserId >Message <i class="bi bi-envelope"></i></a>
     </div>
   </div>
-</div>
+  </div>
