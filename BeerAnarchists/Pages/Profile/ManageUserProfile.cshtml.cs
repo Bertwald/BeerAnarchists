@@ -25,7 +25,7 @@ public class ManageUserProfileModel : PageModel {
     [BindProperty]
     public IFormFile? UserImage { get; set; }
     public async Task<ActionResult> OnGet(string userId) {
-        var user = await _userService.GetUserAllInclusiceAsync(userId);
+        var user = await _userService.GetUserAllInclusiveAsync(userId);
         CurrentUserData = new UserDataHolder {
             MemberSince = user.MemberSince.ToShortDateString(),
             UserId = userId,
@@ -36,6 +36,7 @@ public class ManageUserProfileModel : PageModel {
             NumberOfPosts = user.Posts,
             NumberOfFriends = user.Friends.Count(),
             Ignored = user.Ignored,
+            Friends = user.Friends.ToList(),
             LatestPost = user.LastPost?.ToLongDateString(),
         };
         return Page();
@@ -45,21 +46,23 @@ public class ManageUserProfileModel : PageModel {
         if (!ModelState.IsValid) {
             return BadRequest(ModelState);
         }
+        // If there is no new uploaded picture, dont replace the one we have
+        if (UserImage is not null) {
+            string fileName = string.Empty;
 
-        string fileName = string.Empty;
-
-        if (UserImage != null) {
-            if (CurrentUserData.ImageUrl != null) {
-                if (System.IO.File.Exists("./wwwroot/img/" + CurrentUserData.ImageUrl)) {
-                    System.IO.File.Delete("./wwwroot/img/" + CurrentUserData.ImageUrl);
+            if (UserImage != null) {
+                if (CurrentUserData.ImageUrl != null) {
+                    if (System.IO.File.Exists("./wwwroot/img/" + CurrentUserData.ImageUrl)) {
+                        System.IO.File.Delete("./wwwroot/img/" + CurrentUserData.ImageUrl);
+                    }
                 }
-            }
 
-            fileName = Guid.NewGuid() + UserImage.FileName;
-            var file = "./wwwroot/img/" + fileName;
-            using var fileStream = new FileStream(file, FileMode.Create);
-            await UserImage.CopyToAsync(fileStream);
-            CurrentUserData.ImageUrl = fileName;
+                fileName = Guid.NewGuid() + UserImage.FileName;
+                var file = "./wwwroot/img/" + fileName;
+                using var fileStream = new FileStream(file, FileMode.Create);
+                await UserImage.CopyToAsync(fileStream);
+                CurrentUserData.ImageUrl = fileName;
+            }
         }
 
         var savedUser = await _forumDbContext.Users.FindAsync(CurrentUserData.UserId);
@@ -76,7 +79,7 @@ public class ManageUserProfileModel : PageModel {
                 throw;
             }
         }
-        return Page();
+        return RedirectToPage("./ManageUserProfile", new { userId = savedUser.Id});
     }
 
     public class UserDataHolder {
@@ -86,10 +89,10 @@ public class ManageUserProfileModel : PageModel {
         public string? ImageUrl { get; set; }
         public string? Description { get; set; }
         public string? MemberSince { get; set; }
-        public int NumberOfPosts { get; set; }
-        public int NumberOfFriends { get; set; }
+        public int? NumberOfPosts { get; set; }
+        public int? NumberOfFriends { get; set; }
         public string? LatestPost { get; set; }
-        public IEnumerable<ForumUser> Ignored { get; set; }
-        public List<ForumUser> Friends { get; set; }
+        public IEnumerable<ForumUser>? Ignored { get; set; }
+        public List<ForumUser>? Friends { get; set; }
     }
 }

@@ -97,7 +97,7 @@ public sealed class UserService : IUser {
         }
     }
 
-    public async Task<ForumUser?> GetUserAllInclusiceAsync(string userId) {
+    public async Task<ForumUser?> GetUserAllInclusiveAsync(string userId) {
         if (userId == null) {
             return null;
         }

@@ -5,7 +5,7 @@ public interface IUser
 {
     #region User
     public Task<bool> IsValidUser(string userId);
-    public Task<ForumUser?> GetUserAllInclusiceAsync(string userId);
+    public Task<ForumUser?> GetUserAllInclusiveAsync(string userId);
     public Task <IEnumerable<Group>> GetUserGroups(string userId);
     #endregion
     #region Friends

@@ -30,7 +30,7 @@ public class GroupsModel : PageModel {
     public SelectList FriendsSL { get; set; }
 
     public async Task PopulateFriendsDropDownList(IUser userService, string userId) {
-        var friends = (await userService.GetUserAllInclusiceAsync(userId))?.Friends;
+        var friends = (await userService.GetUserAllInclusiveAsync(userId))?.Friends;
 
         FriendsSL = new SelectList(friends,
             nameof(ForumUser.Id),
@@ -43,7 +43,7 @@ public class GroupsModel : PageModel {
     }
 
     public async Task<ActionResult> OnGet(string userId) {
-        var user = await _userService.GetUserAllInclusiceAsync(userId);
+        var user = await _userService.GetUserAllInclusiveAsync(userId);
         if (user == null) {
             return BadRequest();
         }

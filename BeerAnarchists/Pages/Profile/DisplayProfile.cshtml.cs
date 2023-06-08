@@ -38,8 +38,8 @@ public class DisplayProfileModel : PageModel
         }
 
         ViewerId = viewerId;
-        var viewer = await _userService.GetUserAllInclusiceAsync(viewerId);
-        var user = await _userService.GetUserAllInclusiceAsync(userId);
+        var viewer = await _userService.GetUserAllInclusiveAsync(viewerId);
+        var user = await _userService.GetUserAllInclusiveAsync(userId);
         CurrentUserData = new UserDataHolder {
             MemberSince = user.MemberSince.ToShortDateString(),
             UserId = userId,

@@ -7,37 +7,61 @@
     ViewData["Title"] = "My Profile";
 }
 
-<div class="content">
+<div class="content mt-2">
   <div class="d-flex justify-content-between" style="border: 1px solid gold; background-color:#4b0076; color:#f6d56d">
   <div class="col-lg-*"><h4></h4></div>
-  <div class="col-lg-*"><h4>Member Profile</h4></div>
-  <div class="col-lg-*"><p style="vertical-align:bottom">Member Since:@Model.CurrentUserData.MemberSince</p></div>
+  <div class="col-lg-*"><h4>My Profile</h4></div>
+  <div class="col-lg-* text-center"><p>Member Since:@Model.CurrentUserData.MemberSince</p></div>
   </div>
-<div class="row">
-  <div style="max-width: 192px">
-  <img src="~/img/@Model.CurrentUserData.ImageUrl" alt="You have not uploaded any avatar Image" width="192"/>
-  @if(Model.CurrentUserData.Alias is not null){
-      <p>@Model.CurrentUserData.Alias</p>
+<div class="row mt-2">
+  <div class="col-3">
+    <img src="~/img/@Model.CurrentUserData.ImageUrl" alt="You have not uploaded any avatar Image" width="192"/>
+      @if(Model.CurrentUserData.Alias is not null){
+      <p>Posting as: @Model.CurrentUserData.Alias</p>
     }else{
       <p>@Model.CurrentUserData.UserName</p>
-      <p>You might want to add an alias</p>
+      <p>You might want to add an alias to avoid your mail to be seen in public</p>
     }
   </div>
-  <div class="row-cols-6">
-  <p>Statistics:</p>
-  <p>#Friends: @Model.CurrentUserData.NumberOfFriends</p>
-  <p>#Enemies: @Model.CurrentUserData.Ignored.Count()</p>
-  <p>#Posts: @Model.CurrentUserData.NumberOfPosts</p>
+  <div class="col-6">
+    <div class="row">
+      <div class="col-5">
+        <p><b>Alias</b></p>
+        @Html.DisplayFor(m => m.CurrentUserData.Alias)
+      </div>
+      <div class="col-5">
+        <p><b>Username</b></p>
+        @Html.DisplayFor(m => m.CurrentUserData.UserName)
+      </div>
+    </div>
+  <div class="row mt-4">
+    <div class="text-center">
+      <p><b>My Description</b></p>
+      @Html.TextAreaFor(m => m.CurrentUserData.Description, new { cols = 50, rows = 8})
+    </div>
+  </div>
+    <p>Statistics:</p>
+    <p>#Friends: @Model.CurrentUserData.NumberOfFriends</p>
+    <p>#Enemies: @Model.CurrentUserData.Ignored.Count()</p>
+    <p>#Posts: @Model.CurrentUserData.NumberOfPosts</p>
+  </div>
   </div>
 </div>
+<div class="row">
+  <h5><b>Update Information</b></h5>
 </div>
+<div class="row">
 <form method="post" enctype="multipart/form-data">
-
+  <div class="row">
+  <div class="col-3">
         <label asp-for="CurrentUserData.Alias" class="form-label">Alias</label>
         <textarea asp-for="CurrentUserData.Alias" class="form-control" cols="40" rows="1"></textarea>
-
+  </div>
+  <div class="col-8">
         <label asp-for="CurrentUserData.Description" class="form-label">Description</label>
         <textarea asp-for="CurrentUserData.Description" class="form-control" cols="40" rows="2"></textarea>
+  </div>
+  </div>
 
         <label asp-for="UserImage" class="form-label">Change Image</label>
         <input type="file" class="form-control" name="UserImage">
@@ -45,5 +69,8 @@
         @Html.HiddenFor(m => m.CurrentUserData.UserId)
         @Html.HiddenFor(m => m.CurrentUserData.UserName)
         @Html.HiddenFor(m => m.CurrentUserData.Ignored)
+        @Html.HiddenFor(m => m.CurrentUserData.ImageUrl)
         <input type="submit" class="btn btn-success" value="Update profile">
 </form>
+        
+</div>
