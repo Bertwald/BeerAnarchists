@@ -12,15 +12,17 @@ public class InboxModel : PageModel
     private readonly IUser _userService;
     private readonly UserManager<ForumUser> _userManager;
 
-    public InboxModel(IUser userService, UserManager<ForumUser> userManager) {
-        _userService = userService;
-        _userManager = userManager;
-    }
     [BindProperty]
     public string MailboxOwnerId { get; set; }
     [BindProperty]
     public IEnumerable<PrivateMessage> Inbox { get; set; }
 
+    public IEnumerable<PrivateMessage> OutBox { get; set; }
+
+    public InboxModel(IUser userService, UserManager<ForumUser> userManager) {
+        _userService = userService;
+        _userManager = userManager;
+    }
     public async Task<ActionResult> OnGet(string userId)
     {
         if(userId == null) {

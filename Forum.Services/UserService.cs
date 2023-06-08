@@ -3,8 +3,6 @@ using Forum.Data.Interfaces;
 using Forum.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Forum.Services;
 /// <summary>
@@ -36,6 +34,20 @@ public sealed class UserService : IUser {
             throw;
         }
         return true;
+    }
+    public async Task<bool> RemoveIgnoredAsync(string userId, string ignoredId) {
+        var user = _db.ForumUsers.Where(x => x.Id == userId).Include(x => x.Ignored).FirstOrDefault();
+        if (user != null) {
+            user.Ignored = user.Ignored.Where(x => x.Id != ignoredId).ToList();
+            _db.Entry(user).State = EntityState.Modified;
+            try {
+                await _db.SaveChangesAsync();
+            } catch (Exception) {
+                throw;
+            }
+            return true;
+        }
+        return false;
     }
 
     public async Task<bool> AddFriendAsync(string userId, string friendId) {
@@ -239,8 +251,8 @@ public sealed class UserService : IUser {
             .FirstOrDefaultAsync();
 
         if ((applicant?.Applications.Contains(group) ?? false) && (group?.Applicants.Contains(applicant) ?? false) && group.Creator == owner) {
-            applicant.Invitations = applicant.Invitations.Where(x => x != group).ToList();
-            group.Invitees = group.Invitees.Where(x => x != applicant).ToList();
+            applicant.Applications = applicant.Applications.Where(x => x != group).ToList();
+            group.Applicants = group.Applicants.Where(x => x != applicant).ToList();
 
             group.Members = group.Members.Append(applicant).ToList();
             applicant.MemberGroups = applicant.MemberGroups.Append(group).ToList();
@@ -265,7 +277,7 @@ public sealed class UserService : IUser {
         List<Group> groups = new();
 
         var ownedGroups = await _db.Users.Where(x => x.Id == userId).SelectMany(x => x.OwnedGroups).ToListAsync();
-        var memberGroups = await _db.Users.Where(x => x.Id == userId).SelectMany(x => x.OwnedGroups).ToListAsync();
+        var memberGroups = await _db.Users.Where(x => x.Id == userId).SelectMany(x => x.MemberGroups).ToListAsync();
 
         groups.AddRange(ownedGroups);
         groups.AddRange(memberGroups);
@@ -290,20 +302,6 @@ public sealed class UserService : IUser {
         }
     }
 
-    public async Task<bool> RemoveIgnoredAsync(string userId, string ignoredId) {
-        var user = _db.ForumUsers.Where(x => x.Id == userId).Include(x => x.Ignored).FirstOrDefault();
-        if (user != null) {
-            user.Ignored = user.Ignored.Where(x => x.Id != ignoredId).ToList();
-            _db.Entry(user).State = EntityState.Modified;
-            try {
-                await _db.SaveChangesAsync();
-            } catch (Exception) {
-                throw;
-            }
-            return true;
-        }
-        return false;
-    }
 
     public async Task<bool> RemoveFriendAsync(string userId, string friendId) {
         var user = _db.ForumUsers.Where(x => x.Id == userId).Include(x => x.Friends).FirstOrDefault();
@@ -335,5 +333,76 @@ public sealed class UserService : IUser {
                 throw;
             }
         }
+    }
+
+    public async Task RejectInvitation(string userId, int groupId) {
+        if(userId == null || groupId == 0) {
+            return;
+        }
+        var user = _db.Users.Where(x => x.Id == userId).FirstOrDefault();
+        var group = _db.Groups.Where(x => x.Id == groupId).FirstOrDefault();
+        if(group != null) {
+            group.Invitees = group.Invitees.Where(x => x.Id != userId);
+            _db.Entry(group).State = EntityState.Modified;
+        }
+        if(user != null) {
+            user.Invitations = user.Invitations.Where(x => x.Id != groupId).ToList();
+            _db.Entry(user).State = EntityState.Modified;
+        }
+        if(user != null || group != null) {
+            try {
+                await _db.SaveChangesAsync();
+            } catch(Exception) {
+                throw;
+            }
+        }     
+        return;
+    }
+
+    public async Task RejectApplicant(string userId, int groupId) {
+        if (userId == null || groupId == 0) {
+            return;
+        }
+        var user = _db.Users.Where(x => x.Id == userId)
+            .Include(x => x.Applications)
+            .FirstOrDefault();
+        var group = _db.Groups.Where(x => x.Id == groupId)
+            .Include(x => x.Applicants)
+            .FirstOrDefault();
+        if (group != null) {
+            group.Applicants = group.Applicants
+                .Where(x => x.Id != userId)
+                .ToList();
+            _db.Entry(group).State = EntityState.Modified;
+        }
+        if (user != null) {
+            user.Applications = user.Applications
+                .Where(x => x.Id != groupId)
+                .ToList();
+            _db.Entry(user).State = EntityState.Modified;
+        }
+        if (user != null || group != null) {
+            try {
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception) {
+                throw;
+            }
+        }
+        return;
+    }
+
+    public async Task<Group?> GetGroupAllInclusive(string userId, int groupId) {
+        if(userId == null || groupId == 0) {
+            return null;
+        }
+
+        var group = _db.Groups.Where(x => x.Id == groupId && x.Creator.Id == userId)
+            .Include(x => x.Applicants)
+            .Include(x => x.Invitees)
+            .Include(x => x.Members)
+            .FirstOrDefault();
+
+        return group;
     }
 }
