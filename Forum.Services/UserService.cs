@@ -84,7 +84,7 @@ public sealed class UserService : IUser {
         return (await _db.Users.FindAsync(userId)) != null;
     }
 
-    public async Task SendMessageAsync(PrivateMessage message) {
+    public async Task SendMessageAsync(Message message) {
         if (message == null) {
             return;
         }
@@ -302,7 +302,6 @@ public sealed class UserService : IUser {
         }
     }
 
-
     public async Task<bool> RemoveFriendAsync(string userId, string friendId) {
         var user = _db.ForumUsers.Where(x => x.Id == userId).Include(x => x.Friends).FirstOrDefault();
         if (user != null) {
@@ -405,4 +404,5 @@ public sealed class UserService : IUser {
 
         return group;
     }
+
 }

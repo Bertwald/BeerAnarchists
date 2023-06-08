@@ -43,7 +43,7 @@
             }
       </table>
     <h3 class="text-center">
-      Blocked Users
+      Ignored Users
     </h3>
       <table class="table table-dark table-striped table-hover">
         <thead>
@@ -72,14 +72,37 @@
 
   <div class="row">
     <h3 class="text-center">
-      My Invites
+      Invited To Groups
     </h3>
-
+    <table class="table table-dark table-striped table-hover">
+      <thead>
+        <tr>
+          <td>Group</td>
+          <td>Owner</td>
+          <td>Members</td>
+          <td></td>
+          <td></td>
+        </tr>
+      </thead>
+            @foreach(var invitation in Model.Invitations) {
+                <tr>
+                  <td>@invitation.Name</td>
+                  <td>@(invitation.Creator.Alias?? invitation.Creator.UserName)</td>
+                  <td>@invitation.Members.Count()</td>
+                  <td>
+                    Accept button
+                  </td>
+                  <td>
+                    Reject button
+                  </td>
+                </tr>
+            }
+        </table>
   </div>
 
   <div class="row">
     <h3 class="text-center">
-      My recieved Group Messages
+      My Recieved Group Messages
     </h3>
             @foreach(var message in Model.GroupMessages) {
         <div class="row">
@@ -145,7 +168,7 @@
               </form>
 
               <td>
-                <a class="btn btn-primary btn-sm" asp-page="/Message/GroupMessage" asp-route-senderGroupId=@group.Id>
+                <a class="btn btn-primary btn-sm" asp-page="/Message/PrivateMessage" asp-page-handler="GroupMessage" asp-route-userId=@user.Id asp-route-groupId=@group.Id>
                   Send Group Message <i class="bi bi-envelope"></i>
                 </a>
               </td>
@@ -212,7 +235,7 @@
           <tr>
             <td>Group</td>
             <td>Owner</td>
-            <td>Toggle Apply</td>
+            <td>Add application</td>
           </tr>
       </thead>
         @foreach(var group in Model.FriendGroups) {
@@ -221,7 +244,7 @@
               <td>@(group.Creator.Alias??group.Creator.UserName)</td>
               <td>
                 <a class="btn btn-success btn-sm" asp-page-handler="SeekMembership" asp-route-userId=@user?.Id asp-route-groupId=@group?.Id asp-route-add=@true>
-                  Change <i class="bi bi-exclamation-diamond-fill"></i>
+                  Apply <i class="bi bi-exclamation-diamond-fill"></i>
                 </a>
               </td>
             </tr>

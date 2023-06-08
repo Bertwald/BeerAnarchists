@@ -29,7 +29,7 @@ public interface IUser
     public Task DeleteGroup(string ownerId, int groupId);
     #endregion
     #region Message
-    public Task SendMessageAsync(PrivateMessage message);
+    public Task SendMessageAsync(Message message);
     public Task<IEnumerable<PrivateMessage>> GetInboxAsync(string userId);
     public int GetNumberInInbox(string userId);
     #endregion
