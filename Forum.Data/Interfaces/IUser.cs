@@ -25,6 +25,7 @@ public interface IUser
     public Task AcceptApplicant(string ownerId, string userId, int groupId);
     public Task RejectApplicant(string userId, int groupId);
     public Task<Group?> SearchGroup(string searchstring);
+    public Task RemoveMember(string OwnerId, string memberId, int groupId);
     public Task CreateGroup(string ownerId, string groupName);
     public Task DeleteGroup(string ownerId, int groupId);
     #endregion

@@ -33,6 +33,7 @@ public class Program {
         builder.Services.AddScoped<IForumPost, Forum.Services.ForumPostService>();
         builder.Services.AddScoped<IUser, Forum.Services.UserService>();
         builder.Services.AddScoped<SignInManager<Forum.Data.Models.ForumUser>>();
+        builder.Services.AddScoped<Forum.Services.ApiService>();
         #endregion
 
 
@@ -46,11 +47,28 @@ public class Program {
             options.SlidingExpiration = true;
         });
 
+        builder.Services.Configure<IdentityOptions>(options =>
+        {
+            // Default Password settings.
+            options.Password.RequireDigit = false;
+            options.Password.RequireLowercase = false;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequireUppercase = false;
+            options.Password.RequiredLength = 6;
+            options.Password.RequiredUniqueChars = 1;
+        });
+
+
+
         builder.Services.AddRazorPages();
         builder.Services.AddAuthentication()
             .AddCookie();
         builder.Services.AddAuthorization();
      
+
+
+
+
         var app = builder.Build();
 
 

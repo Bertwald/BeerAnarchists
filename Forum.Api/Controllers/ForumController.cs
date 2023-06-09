@@ -99,6 +99,7 @@ public class ForumController : ForumRouteMapping {
             return NotFound();
         }
         return await _context.ForumUsers
+            .Select(x => x)
             .OrderByDescending(user => user.Posts)
             .Take(10)
             .ToListAsync();

@@ -75,9 +75,15 @@ public sealed class UserService : IUser {
         if (userId == null) {
             return Enumerable.Empty<PrivateMessage>();
         }
-        var userIgnored = _db.Users.SelectMany(user => user.Ignored);
-        var messages = _db.PrivateMessages.Where(message => message.Reciever.Id == userId && !userIgnored.Contains(message.Sender));
-        return messages.Include(x => x.Sender).Include(x => x.Reciever).AsEnumerable();
+        var userIgnored = _db.Users
+            .Where(x => x.Id == userId)
+            .SelectMany(user => user.Ignored);
+        var messages = await _db.PrivateMessages
+            .Where(message => message.Reciever.Id == userId && !userIgnored.Contains(message.Sender))
+            .Include(x => x.Sender)
+            .Include(x => x.Reciever)
+            .ToListAsync();
+        return messages;
     }
 
     public async Task<bool> IsValidUser(string userId) {
@@ -116,10 +122,14 @@ public sealed class UserService : IUser {
         if (userId == null) {
             return default;
         }
-        var userIgnored = _db.Users.SelectMany(user => user.Ignored);
-        var messages = _db.PrivateMessages.Where(x => x.Reciever.Id == userId && x.Read==false && !userIgnored.Contains(x.Sender));
+        var userIgnored = _db.Users
+            .Where(x => x.Id == userId)
+            .SelectMany(user => user.Ignored);
+        var messages = _db.PrivateMessages
+            .Where(x => x.Reciever.Id == userId && x.Read==false && !userIgnored
+            .Contains(x.Sender)).Count();
 
-        return messages.Count();
+        return messages;
     }
 
     public int GetNumberInGroupMessages(string userId) {
@@ -405,4 +415,24 @@ public sealed class UserService : IUser {
         return group;
     }
 
+    public async Task RemoveMember(string OwnerId, string memberId, int groupId) {
+        var group = await _db.Groups.Where(x => x.Creator.Id == OwnerId).Include(x => x.Members).FirstOrDefaultAsync();
+        var member = await _db.ForumUsers.Where(x => x.Id == memberId).Include(x => x.MemberGroups).FirstOrDefaultAsync();
+
+        if (group == null || member == null) {
+            return;
+        }
+        group.Members = group.Members.Where(x => x.Id != memberId).ToList();
+        member.MemberGroups = member.MemberGroups.Where(x => x.Id != groupId).ToList();
+
+        _db.Entry(group).State = EntityState.Modified;
+        _db.Entry(member).State = EntityState.Modified;
+        
+        try {
+            await _db.SaveChangesAsync();
+        } catch (Exception ex) {
+            throw;
+        }
+
+    }
 }

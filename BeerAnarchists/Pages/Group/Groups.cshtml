@@ -146,6 +146,8 @@
             <td>#Members</td>
             <td>Invite Friend</td>
             <td>Send Invitation</td>
+            <td>Select Member</td>
+            <td>Kick from group</td>
             <td></td>
             <td></td>
           </tr>
@@ -166,7 +168,17 @@
               </td>
               <td><button id="sendinvite" type="submit" class="btn btn-sm btn-primary">Invite</button></td>
               </form>
-
+                <form asp-page-handler="KickMember" method="post">
+                @Html.HiddenFor(m => m.OwnerId)
+                @Html.Hidden("groupId", group.Id)
+              <td>
+                <select asp-for="SelectedGroupMemberId" asp-items="@(new SelectList(group.Members.Select(x => x.Id)))">
+                <option value=""> Group Member </option>
+              </select>
+              </td>
+              <td>
+                <button id="kickmember" type="submit" class="btn btn-sm btn-primary">Kick</button>
+              </form>
               <td>
                 <a class="btn btn-primary btn-sm" asp-page="/Message/PrivateMessage" asp-page-handler="GroupMessage" asp-route-userId=@user.Id asp-route-groupId=@group.Id>
                   Send Group Message <i class="bi bi-envelope"></i>
@@ -243,7 +255,7 @@
               <td>@group.Name</td>
               <td>@(group.Creator.Alias??group.Creator.UserName)</td>
               <td>
-                <a class="btn btn-success btn-sm" asp-page-handler="SeekMembership" asp-route-userId=@user?.Id asp-route-groupId=@group?.Id asp-route-add=@true>
+                <a class="btn btn-success btn-sm" asp-page-handler="SeekMembership" asp-route-userId=@user?.Id asp-route-groupId=@group?.Id asp-route-add=@(true)>
                   Apply <i class="bi bi-exclamation-diamond-fill"></i>
                 </a>
               </td>

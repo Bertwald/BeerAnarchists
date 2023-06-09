@@ -10,7 +10,7 @@ namespace BeerAnarchists.Pages.Message;
 public class PrivateMessageModel : PageModel {
     private readonly UserManager<ForumUser> _userManager;
     private readonly IUser _userService;
-
+    [BindProperty]
     public string MessageType { get; set; }
     [BindProperty]
     public string SenderId { get; set; }

@@ -11,7 +11,7 @@
   <div class="d-flex justify-content-between" style="border: 1px solid gold; background-color:#4b0076; color:#f6d56d">
   <div class="col-lg-*"><h4></h4></div>
   <div class="col-lg-*"><h4>My Profile</h4></div>
-  <div class="col-lg-* text-center"><p>Member Since:@Model.CurrentUserData.MemberSince</p></div>
+  <div class="col-lg-* text-center"><p>Member Since:@Model.CurrentUserData.MemberSince    </p></div>
   </div>
 <div class="row mt-2">
   <div class="col-3">
@@ -40,14 +40,17 @@
       @Html.TextAreaFor(m => m.CurrentUserData.Description, new { cols = 50, rows = 8})
     </div>
   </div>
-    <p>Statistics:</p>
-    <p>#Friends: @Model.CurrentUserData.NumberOfFriends</p>
-    <p>#Enemies: @Model.CurrentUserData.Ignored.Count()</p>
-    <p>#Posts: @Model.CurrentUserData.NumberOfPosts</p>
+
+  <div class="row mt-4 text-center">
+    <p><b>Statistics</b></p>
+    <p>Number Of Friends: @Model.CurrentUserData.NumberOfFriends</p>
+    <p>Number of Ignored Users: @Model.CurrentUserData.Ignored.Count()</p>
+    <p>Total Number of Posts: @Model.CurrentUserData.NumberOfPosts</p>
+    <p>Latest post at @Model.CurrentUserData.LatestPost</p>
   </div>
   </div>
 </div>
-<div class="row">
+<div class="row mt-4 text-center">
   <h5><b>Update Information</b></h5>
 </div>
 <div class="row">
@@ -73,4 +76,5 @@
         <input type="submit" class="btn btn-success" value="Update profile">
 </form>
         
+</div>
 </div>

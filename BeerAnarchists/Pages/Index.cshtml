@@ -1,8 +1,10 @@
 ﻿@page
+@using Forum.Services;
 @using Microsoft.AspNetCore.Identity;
 @inject SignInManager<Forum.Data.Models.ForumUser> SignInManager
 @inject UserManager<Forum.Data.Models.ForumUser> UserManager
 @inject RoleManager<IdentityRole> RoleManager
+@inject ApiService ApiService
 @model IndexModel
 @{
     ViewData["Title"] = "Forum Index";
@@ -25,6 +27,7 @@
 <div class="row text-center">
     <h1 class="display-4">Welcome to the Beer-Anarchists Forum</h1>
     <p>The community where you can enjoy first class conversation from the comfort of your sofa, or bed</p>
+    <p>Total number of posts: @(await ApiService.GetNumberOfPosts())</p>
     <h3>Our Forums</h3>
 </div>
 <div class="row">
@@ -58,5 +61,26 @@
             </tr>
         }
     </table>
+</div>
+            @{
+                var numberOfUsers = await ApiService.GetRegisteredUsers();
+                var topPosters = await ApiService.GetTopPosters();
+                topPosters = topPosters.Take(3);
+                int posternumber = 1;
+            }
+<div class="row pt-3">
+  @*<div class="col-6">
+    <p>Our Top 3 posters (since start)</p>
+            @foreach(var poster in topPosters) {
+                <p>@posternumber: @(poster.Alias??poster.UserName) with @poster.Posts Posts</p>
+                posternumber++;
+            }
+  </div>*@
+  <div class="col-5">
+    <p>We have @numberOfUsers active users as of @DateTime.Now</p>
+  </div>
+  <div class="col-6">
+
+  </div>
 </div>
 </div>

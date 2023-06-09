@@ -9,56 +9,66 @@
   ViewData["Title"] = "User Profile: " + (Model.CurrentUserData.Alias ?? Model.CurrentUserData.UserName);
 }
 <div class="container">
-  <div class="d-flex justify-content-between" style="border: 1px solid black; background-color:#4b0076; color:#f6d56d">
+
+  <div class="content mt-2">
+  <div class="d-flex justify-content-between text-center" style="border: 1px solid gold; background-color:#4b0076; color:#f6d56d">
   <div class="col-lg-*"><h4></h4></div>
-  <div class="col-lg-*"><h4>Member Profile</h4></div>
-  <div class="col-lg-*"><p style="vertical-align:bottom">Member Since:@Model.CurrentUserData.MemberSince</p></div>
+  <div class="col-lg-*"><h4>User Profile</h4></div>
+  <div class="col-lg-*"><p>Member Since:@Model.CurrentUserData.MemberSince</p></div>
   </div>
-<div class="row justify-content-center">
-  <div class="col-6" style="max-width: 256px">
-    <img src="~/img/@Model.CurrentUserData.ImageUrl" alt="Image" width="256"/>
-  </div>
-  <div class="col-6">
-    <div class="row justify-content-center">
+<div class="row mt-2">
+  <div class="col-3">
+    <img src="~/img/@Model.CurrentUserData.ImageUrl" alt="You have not uploaded any avatar Image" width="192"/>
       @if(Model.CurrentUserData.Alias is not null){
-        @Html.DisplayFor(m => m.CurrentUserData.Alias);
-      }else{
-        @Html.DisplayFor(m => m.CurrentUserData.UserName);
-      }
+      <p>Posting as: @Model.CurrentUserData.Alias</p>
+    }else{
+      <p>User has not yet decided upon an alias</p>
+    }
+  </div>
+  <div class="col-6 text-center">
+        <p><b>Alias</b></p>
+        @Html.DisplayFor(m => m.CurrentUserData.Alias)
+  <div class="row mt-4">
+    <div class="text-center">
+      <p><b>Description</b></p>
+      @Html.TextAreaFor(m => m.CurrentUserData.Description, new { cols = 50, rows = 8})
     </div>
-    <div class="row justify-content-center">
-      Description: @Html.DisplayFor(m => (m.CurrentUserData.Description))
-    </div>
-    <div class="row justify-content-center">
-      <div class="col-2" style="text-align:center">
-        <p>Statistics:</p>
-        #Posts: @Html.DisplayFor(m => m.CurrentUserData.NumberOfPosts)
-        Latest post: @Html.DisplayFor(m => m.CurrentUserData.LatestPost)
-      </div>
-    </div>
+  </div>
+@{#region Statistics}
+  <div class="row mt-4 text-center">
+    <p><b>User Statistics</b></p>
+    <p>Number Of Friends: @Model.CurrentUserData.NumberOfFriends</p>
+    <p>Number of Ignored Users: @Model.CurrentUserData.Ignored.Count()</p>
+    <p>Total Number of Posts: @Model.CurrentUserData.NumberOfPosts</p>
+    <p>Latest post at @Model.CurrentUserData.LatestPost</p>
+  </div>
   </div>
 </div>
+@{#endregion}
+@{#region Buttons}
   <div class="row justify-content-center">
     <div class="col-5 input-group-lg">
       <form method="post" style="display:inline">
                 @if(Model.ViewerData.Friends.Where(x => x.Id == Model.CurrentUserData.UserId).Any()) {
-                    <button class="btn btn-warning btn-lg" asp-page-handler="AddFriend" asp-route-userId=@Model.ViewerId asp-route-friendId=@Model.CurrentUserData.UserId asp-route-befriend=@false>Remove Friend</button>
+                    <button class="btn btn-warning btn-lg"  asp-page-handler="AddFriend" asp-route-userId=@Model.ViewerId asp-route-friendId=@Model.CurrentUserData.UserId asp-route-befriend=@(false)>Remove Friend</button>
                  
                 } else {
-                <button class="btn btn-warning btn-lg" asp-page-handler="AddFriend" asp-route-userId=@Model.ViewerId asp-route-friendId=@Model.CurrentUserData.UserId asp-route-befriend=@true>Add Friend</button>
+                <button class="btn btn-warning btn-lg" asp-page-handler="AddFriend" asp-route-userId=@Model.ViewerId asp-route-friendId=@Model.CurrentUserData.UserId asp-route-befriend=@(true)>Add Friend</button>
                 }
       </form>
+
       <form method="post" style="display:inline">
             @if(Model.ViewerData.Ignored.Where(x => x.Id == Model.CurrentUserData.UserId).Any()) {
-                <button class="btn btn-warning btn-lg" asp-page-handler="IgnoreUser" asp-route-userId=@Model.ViewerId asp-route-ignoredId=@Model.CurrentUserData.UserId asp-route-ignore=@false>Allow User</button>
+                <button class="btn btn-warning btn-lg" asp-page-handler="IgnoreUser" asp-route-userId=@Model.ViewerId asp-route-ignoredId=@Model.CurrentUserData.UserId asp-route-ignore=@(false)>Allow User</button>
            
             } else {
-               <button class="btn btn-warning btn-lg" asp-page-handler="IgnoreUser" asp-route-userId=@Model.ViewerId asp-route-ignoredId=@Model.CurrentUserData.UserId asp-route-ignore=@true>Ignore User</button>
+               <button class="btn btn-warning btn-lg" asp-page-handler="IgnoreUser" asp-route-userId=@Model.ViewerId asp-route-ignoredId=@Model.CurrentUserData.UserId asp-route-ignore=@(true)>Ignore User</button>
             }
-
       </form>
-    
       <a class="btn btn-primary btn-lg" asp-page="/Message/PrivateMessage" asp-route-senderId=@Model.ViewerId asp-route-recieverId=@Model.CurrentUserData.UserId >Message <i class="bi bi-envelope"></i></a>
     </div>
   </div>
+@{#endregion}
+
   </div>
+</div>

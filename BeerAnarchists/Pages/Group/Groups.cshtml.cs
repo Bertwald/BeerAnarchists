@@ -1,17 +1,14 @@
 using Forum.Data.Interfaces;
 using Forum.Data.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.IdentityModel.Tokens;
 
 namespace BeerAnarchists.Pages.Groups;
 [Authorize]
 public class GroupsModel : PageModel {
     private readonly IUser _userService;
-    private readonly UserManager<ForumUser> _userManager;
 
     public List<GroupMessage> GroupMessages { get; set; } = new();
     public List<ForumUser> Friends { get; set; } = new();
@@ -26,6 +23,8 @@ public class GroupsModel : PageModel {
     public string NewGroupName { get; set; }
     [BindProperty]
     public string? SelectedFriend { get; set; }
+    [BindProperty]
+    public string? SelectedGroupMemberId { get; set; }
 
     public SelectList FriendsSL { get; set; }
 
@@ -37,9 +36,8 @@ public class GroupsModel : PageModel {
             nameof(ForumUser.UserName));
     }
 
-    public GroupsModel(IUser userservice, UserManager<ForumUser> userManager) {
+    public GroupsModel(IUser userservice) {
         _userService = userservice;
-        _userManager = userManager;
     }
 
     public async Task<ActionResult> OnGet(string userId) {
@@ -134,6 +132,16 @@ public class GroupsModel : PageModel {
         }
 
         await _userService.AddGroupInvitation(SelectedFriend, groupId);
+        return RedirectToPage("./Groups", new { userId = OwnerId });
+    }
+
+    public async Task<ActionResult> OnPostKickMemberAsync(int groupId) {
+        if (SelectedGroupMemberId == null || groupId == 0) {
+            return RedirectToPage("./Groups", new { userId = OwnerId });
+        }
+
+        _userService.RemoveMember(OwnerId, SelectedGroupMemberId, groupId);
+
         return RedirectToPage("./Groups", new { userId = OwnerId });
     }
 

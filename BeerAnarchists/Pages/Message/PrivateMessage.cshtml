@@ -14,6 +14,7 @@
      @Html.HiddenFor(x => x.RecieverId)
      @Html.HiddenFor(x => x.SenderId)
      @Html.HiddenFor(x => x.RecieverGroupId)
+     @Html.HiddenFor(x => x.MessageType)
      @Html.TextBox("MessageTitle", null, new {@class = "form-control"})
      @Html.TextArea("Message", null, new {@class= "form-control"})
      <button type="submit" class="btn btn-success btn-lg">

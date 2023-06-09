@@ -69,7 +69,7 @@ public class IndexModel : PageModel
     {
         if(RoleName != null)
         {
-           _adminService.AddRoleAsync(RoleName);
+           await _adminService.AddRoleAsync(RoleName);
         }
         return RedirectToPage("./Index");
     }
